@@ -70,15 +70,6 @@ const FortuneGenerator = () => {
             <label htmlFor="include-checkbox">Include user created fortunes</label>
          </div>
          <h1>{focusedFortune ? focusedFortune.text : ''}</h1>
-
-         <div className="fortune-alt-btns">
-            <Link to='search'>
-               <p>Search</p>
-            </Link>
-            <Link to='addFortune'>
-               <p>Submit fortune</p>
-            </Link>
-         </div>
       </div>
    )
 }

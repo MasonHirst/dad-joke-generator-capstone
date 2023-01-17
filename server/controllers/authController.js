@@ -130,19 +130,20 @@ module.exports = {
    },
 
    findUser: async (req, res) => {
+      console.log('................find user started')
       try {
          // requireAuth
          const accessToken = req.headers.authorization
          const { sub } = await verifyAccessToken(accessToken)
-         console.log(sub)
+         console.log('sub:', sub)
          if (!sub) throw new Error('unauthorized')
          // --------------
-
+         console.log(1.1)
          const user = await User.findOne({
             where: { id: sub },
-            include: ['username', 'admin', 'confirmedAccount'],
          })
-
+         delete user.dataValues.hashedPass
+         console.log(1.2)
          console.log('RETURNED USER: ', user)
          return res.send(user)
       } catch (err) {
