@@ -1,0 +1,17 @@
+-- libraries used:
+password-validator => allows the developer to set requirements for a password, and can be used to validate a string against those requirements
+check-password-strength => takes a string and returns a score between 0 and 1 based on how strong of a password the string isLoadingSlice
+validator => I used the isEmail() function from this package to validate an input string to determine if it is a valid email format
+bcrypt => used to hash passwords in the server for higher security
+
+express => used to set up middleware in my server and handle routes and http requests
+sequelize => used to communicate with my postgreSQL database
+axios => used to make clean http requests to my server
+react-icons => got symbols and icons for use in components
+react-spinners => animated loading icons for axios calls
+font-awesome => more icons for user experience
+sweetalert2 => make customizable alerts for a better user experience and more responsiveness in the website
+Redux => used to store global data across components
+
+
+redis?

@@ -1,0 +1,20 @@
+make a separate table for one time passwords? It would populate a randomized one 
+time password (5 characters) in the table, then delete it once it has been used 
+(user type it in and confirmed their account) ??
+
+maybe instead I make another column in the users table that holds a one time password.
+It would be populated in the database (hashed) by the backend, which would also send the 
+one time password to your email. Server clears the column in the database when you use
+the one time password.
+
+
+can i add an email checker tool that determines if an email format is valid? 
+ex. 'mason@gmail' is not valid
+
+
+add more responsiveness to the sign up form. Maybe check marks and X's that appear as 
+icons next to the inputs when the database query comes back 
+
+
+add a list of requirements beneath each signUp input, and checks or x's by each one as 
+they are passed or not
