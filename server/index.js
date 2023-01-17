@@ -24,7 +24,7 @@ Favorite.belongsTo(Fortune)
 
 //! Endpoints
 const { getFortunes, getAllFortunes, addFortune } = require('./controllers/userFortunes')
-const { checkUsernameAvailability, checkEmailAvailability, registerUser, checkEmailValid, checkLoginInfo, findUser } = require('./controllers/authController')
+const { checkUsernameAvailability, checkEmailAvailability, registerUser, checkEmailValid, checkLoginInfo, findUser, updateUsername } = require('./controllers/authController')
 
 server.get('/accounts/validate/username/:username', checkUsernameAvailability)
 server.get('/accounts/validate/email/:email', checkEmailAvailability)
@@ -32,6 +32,7 @@ server.post('/accounts/users/create', registerUser)
 server.post('/accounts/find/email', checkEmailValid)
 server.post('/accounts/validate/login', checkLoginInfo)
 server.get('/accounts/users', findUser)
+server.post('/accounts/users/update/username', updateUsername)
 
 server.get('/random/fortunes', getFortunes)
 server.get('/fortunes/randomAll', getAllFortunes)

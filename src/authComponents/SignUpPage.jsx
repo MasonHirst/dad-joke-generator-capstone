@@ -16,9 +16,7 @@ import SocialButton from '../style/SocialButton'
 const SignUpPage = () => {
    const navigate = useNavigate()
    const inputRef = useRef()
-   const dispatch = useDispatch()
-   const currentSlice = useSelector(selectSignUpInput)
-   const { usernameSlice, emailSlice, passwordSlice } = currentSlice
+   const [errorState, setErrorState] = useState(null)
 
    const handleSubmit = (e) => {
       let input = inputRef.current.value
@@ -28,10 +26,11 @@ const SignUpPage = () => {
          .then(({data}) => {
             console.log(data)
             if (data === 'email already in use') {
-               alert('email already in use')
+               setErrorState('Email already in use')
             } else if (data === 'not a valid email format') {
-               alert('not a valid email format')
+               setErrorState('Not a valid email format')
             } else {
+               setErrorState(null)
                navigate('password', {state: {email: input}})
             }
          })
@@ -40,9 +39,6 @@ const SignUpPage = () => {
          })
    }
 
-   function updateSlice() {
-      console.log('change!')
-   }
 
    return (
       <AuthModal>
@@ -62,13 +58,17 @@ const SignUpPage = () => {
             <TextField
                inputProps={{
                   ref: inputRef,
-                  onChange: updateSlice,
                }}
                variant="outlined"
                label="Email address"
                fullWidth
+               autoFocus
             />
-            {/* {error ? <p style={{ color: 'red', position: 'relative', top: '-30px'}}>Please enter a valid email</p> : ''} */}
+            {errorState ? (
+               <Typography variant="subtitle2" style={{color: 'red', marginLeft: '15px'}}>{errorState}</Typography>
+            ) : (
+               ''
+            )}
             <Button
                size="large"
                type="submit"

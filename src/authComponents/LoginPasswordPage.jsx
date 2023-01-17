@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { AuthModal } from '../style/AuthModal'
 import { TextField } from '@mui/material'
 import Logo from '../assets/LiveCode-icon.png'
@@ -8,35 +8,41 @@ import Button from '@mui/material/Button'
 import axios from 'axios'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-
 const LoginPasswordPage = ({ setUser, setAccessToken }) => {
    const navigate = useNavigate()
    const inputRef = useRef()
-   const passRef = useRef()
    const location = useLocation()
-   const emailData = location.state.email
-   console.log(emailData)
-
+   const [emailState, setEmailState] = useState(location.state.email)
+   const [error, setError] = useState(null)
+   
    function checkLogin(e) {
       e.preventDefault()
-      axios.post('/accounts/validate/login', {email: passRef.current.value, password: inputRef.current.value})
-      .then(({ data }) => {
-         console.log(data)
-         if (typeof data === 'object') {
-            setUser(data.user)
-            setAccessToken(data.accessToken)
-            localStorage.setItem('accessToken', data.accessToken)
-            navigate('/')
-         } else {
-            alert('incorrect email or password')
-         }
-      })
-      .catch(err => {
-         console.log(err)
-      })
-   }
+      console.log(emailState)
+      axios
+         .post('/accounts/validate/login', {
+            email: emailState,
+            password: inputRef.current.value,
+         })
+         .then(({ data }) => {
+            console.log(data)
+            if (typeof data === 'object') {
+               setError(null)
+               setUser(data.user)
+               setAccessToken(data.accessToken)
+               localStorage.setItem('accessToken', data.accessToken)
+               navigate('/')
+            } else {
+               setError('Incorrect email or password')
+            }
+         })
+         .catch((err) => {
+            console.log(err)
+         })
+      }      
 
-   return (
+      console.log(emailState)
+      
+      return (
       <AuthModal>
          <img src={Logo} width="200px" />
          <Typography
@@ -55,16 +61,29 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
                position: 'relative',
             }}
          >
-            <TextField variant="outlined" label="Email" type="text" fullWidth value={emailData} inputProps={{ref: passRef}} />
+            <TextField
+               variant="outlined"
+               label="Email"
+               type="text"
+               fullWidth
+               onChange={(e) => setEmailState(e.target.value)}
+               value={emailState}
+            />
             <TextField
                variant="outlined"
                label="Password"
                type="password"
                fullWidth
+               autoFocus
                inputProps={{
-                  ref: inputRef
+                  ref: inputRef,
                }}
             />
+            {error ? (
+               <Typography variant="subtitle2" style={{color: 'red', marginLeft: '15px'}}>{error}</Typography>
+            ) : (
+               ''
+            )}
             <div style={{ width: '100%' }}>
                <Typography
                   align="left"
@@ -101,7 +120,7 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
                <Link
                   href="/signup"
                   underline="none"
-                  style={{ fontWeight: '600', fontSize: '14px', }}
+                  style={{ fontWeight: '600', fontSize: '14px' }}
                >
                   Sign up
                </Link>

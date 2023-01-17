@@ -14,14 +14,13 @@ export function Authentication({ children }) {
    const [user, setUser] = useState()
    const [accessToken, setAccessToken] = useState()
 
-
    useEffect(() => {
       const token = localStorage.getItem('accessToken')
       console.log('FROM STORAGE: ', token)
       if (token) {
          setAccessToken(token)
          getUser()
-      }  
+      }
    }, [])
 
    // 1. save token to local storage
@@ -37,7 +36,15 @@ export function Authentication({ children }) {
                <Route path="login" element={<Login />} />
                <Route path="signup" element={<SignUpPage />} />
                <Route path="signup/password" element={<SignUpPasswordPage />} />
-               <Route path="signup/success" element={<SignUpSuccessPage />} />
+               <Route
+                  path="signup/success"
+                  element={
+                     <SignUpSuccessPage
+                        setUser={setUser}
+                        setAccessToken={setAccessToken}
+                     />
+                  }
+               />
                <Route
                   path="login/password"
                   element={

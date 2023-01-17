@@ -58,7 +58,7 @@ module.exports = {
          .spaces()
          .is()
          .not()
-         .oneOf(['/', '\\', '|', 'Passw0rd', 'Password123'])
+         .oneOf(['Passw0rd', 'Password123'])
       let validPassword = schema.validate(password)
       let messages = schema.validate(password, { list: true })
 
@@ -87,7 +87,7 @@ module.exports = {
          })
          console.log('-------------------------', createUser)
 
-         res.status(200).send('user can be created')
+         res.status(200).send(createUser)
       } catch (err) {
          console.log(err)
          res.status(403).send(err)
@@ -107,8 +107,11 @@ module.exports = {
                email: email,
             },
          })
-         let authenticated = bcrypt.compareSync(password, user.hashedPass)
-         delete user.dataValues.hashedPass
+         let authenticated
+         if (user) {
+            authenticated = bcrypt.compareSync(password, user.hashedPass)
+            delete user.dataValues.hashedPass
+         } else res.status(200).send('incorrect email or password')
 
          if (authenticated && user) {
             // User is authenticated
@@ -144,6 +147,28 @@ module.exports = {
          return res.send(user)
       } catch (err) {
          return res.status(403).send('unauthorized')
+      }
+   },
+
+   updateUsername: async (req, res) => {
+      const { id, username } = req.body
+      try {
+         if (username.length > 1) {
+            await User.update(
+               { username: username },
+               { where: { id: id } }
+            )
+
+            const user = await User.findOne({where: { id }})
+            
+            const accessToken = await signAccessToken({ sub: id })
+            res.status(200).send({accessToken, user})
+         } else {
+            res.status(200).send('Username must be at least 2 characters')
+         }
+      } catch (err) {
+         console.log(err)
+         res.status(403).send(err)
       }
    },
 }

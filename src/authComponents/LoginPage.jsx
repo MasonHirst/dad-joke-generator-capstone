@@ -27,12 +27,11 @@ function Login() {
          .then((res) => {
             console.log(res.data)
             if (res.data === 'email valid') {
-               setError(false)
+               setError(null)
                console.log('about to navigate')
-               navigate('password', { state: { email: input } })
+               navigate('password', { state: { email: input }})
             } else {
-               setError(true)
-               alert('Please enter a valid email')
+               setError('Please enter a valid email')
             }
          })
          .catch((err) => {
@@ -60,11 +59,16 @@ function Login() {
                   ref: inputRef,
                   onChange: (e) => setEmail(e.target.value),
                }}
+               autoFocus
                variant="outlined"
                label="Email address"
                fullWidth
             />
-            {/* {error ? <p style={{ color: 'red', position: 'relative', top: '-30px'}}>Please enter a valid email</p> : ''} */}
+            {error ? (
+               <Typography variant="subtitle2" style={{color: 'red', marginLeft: '15px'}}>{error}</Typography>
+            ) : (
+               ''
+            )}
             <Button
                size="large"
                type="submit"

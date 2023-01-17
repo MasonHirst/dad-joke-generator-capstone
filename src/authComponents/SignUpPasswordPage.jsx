@@ -12,13 +12,11 @@ const SignUpPasswordPage = () => {
    const navigate = useNavigate()
    const inputRef = useRef()
    const location = useLocation()
-   const emailData = location.state.email
-   const [emailState, setEmailState] = useState(emailData)
+   const [emailState, setEmailState] = useState(location.state.email)
    const [errorMessage, setErrorMessage] = useState(null)
 
    function handleSubmit(e) {
       e.preventDefault()
-      console.log(inputRef.current.value)
       axios
          .post('/accounts/users/create', {
             email: emailState,
@@ -31,13 +29,13 @@ const SignUpPasswordPage = () => {
                if (data[0] === 'max') setErrorMessage('Password must be less than 100 characters')
                if (data[0] === 'uppercase') setErrorMessage('Password must contain uppercase letters')
                if (data[0] === 'lowercase') setErrorMessage('Password must contain lowercase letters')
-               if (data[0] === 'oneOf') setErrorMessage('Password cannot contain slashes or common passwords')
+               if (data[0] === 'oneOf') setErrorMessage('Password is too common')
                if (data[0] === 'digits') setErrorMessage('Password must contain a digit')
             } else if (data === 'not a valid email format') {
                alert("not a valid email format")
             } else {
                setErrorMessage(null)
-               navigate('/signup/success')
+               navigate('/signup/success', {state: {id: data.id}})
             }
          })
          .catch((err) => {
@@ -67,22 +65,24 @@ const SignUpPasswordPage = () => {
             <TextField
                variant="outlined"
                label="Email"
-               value={emailData}
+               onChange={(e) => setEmailState(e.target.value)}
+               value={emailState}
                type="text"
                fullWidth
-               inputProps={{ onChange: (e) => setEmailState(e.target.value) }}
+               
             />
             <TextField
                variant="outlined"
                label="Password"
                type="password"
                fullWidth
+               autoFocus
                inputProps={{
                   ref: inputRef,
                }}
             />
             {errorMessage ? (
-               <Typography variant="subtitle2" style={{color: 'red'}}>{errorMessage}</Typography>
+               <Typography variant="subtitle2" style={{color: 'red', marginLeft: '15px'}}>{errorMessage}</Typography>
             ) : (
                ''
             )}
