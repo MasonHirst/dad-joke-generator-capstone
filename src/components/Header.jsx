@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
 import LiveCodeIcon from '../assets/LiveCode-icon.png'
-import { Link } from 'react-router-dom'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import HeaderButton from '../style/HeaderButton'
-import axios from 'axios'
 import { getUser } from '../data'
-import { AuthContext } from '../context/Authentication'
 
 import { Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
-import { deepOrange } from '@mui/material/colors'
+import { teal } from '@mui/material/colors'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
 const Header = () => {
+   const navigate = useNavigate()
    const [userData, setUserData] = useState(null)
    const [anchorEl, setAnchorEl] = useState(null)
    const open = Boolean(anchorEl)
@@ -25,9 +23,19 @@ const Header = () => {
       setAnchorEl(null)
    }
 
+   function handleMyAccount() {
+      setAnchorEl(null)
+      navigate('/user/account')
+   }
+
    function handleLogout() {
       localStorage.clear()
       window.location.reload(false)
+   }
+
+   function handleFav() {
+      setAnchorEl(null)
+      navigate('/user/favorites')
    }
 
    useEffect(() => {
@@ -48,6 +56,9 @@ const Header = () => {
             paddingRight: '40px',
             height: '90px',
             background: 'black',
+            position: 'fixed',
+            width: '100vw',
+            top: 0
          }}
       >
          <Link to="/">
@@ -76,7 +87,7 @@ const Header = () => {
                onClick={handleClick}
             >
                <Avatar
-                  sx={{ bgcolor: deepOrange[600] }}
+                  sx={{ bgcolor: teal[600] }}
                   src="/broken-image.jpg"
                />
             </Button>
@@ -95,8 +106,8 @@ const Header = () => {
                   {userData ? userData.username : ''}
                </Typography>
                <div style={{margin: '15px', borderBottom: '1px solid grey'}}></div>
-               <MenuItem onClick={handleClose}>Profile</MenuItem>
-               <MenuItem onClick={handleClose}>My account</MenuItem>
+               <MenuItem onClick={handleMyAccount}>My Account</MenuItem>
+               <MenuItem onClick={handleFav}>Favorites</MenuItem>
                <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
          </div>

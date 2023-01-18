@@ -4,18 +4,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
-import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/Authentication'
 
+import { Typography } from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
+import Button from '@mui/material/Button'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Paper from '@mui/material/Paper'
+
 const FortuneGenerator = () => {
-
-   const {user, accessToken } = useContext(AuthContext)
-
-   // console.log("SUCCESS", user, accessToken)
-
    const dispatch = useDispatch()
    let currentFortunes = useSelector(selectFortunes)
-   let baseURL = "http://localhost:3339"
+   let baseURL = 'http://localhost:3339'
 
    const [focusedFortune, setFocusedFortune] = useState(null)
    const [includeUserFortunes, setIncludeUserFortunes] = useState(false)
@@ -34,7 +35,7 @@ const FortuneGenerator = () => {
       if (includeUserFortunes) {
          dispatch(setLoadingTrue())
          axios
-            .get(`${baseURL}/fortunes/randomAll`)
+            .get(`${baseURL}/fortunes/all`)
             .then((res) => {
                dispatch(setLoadingFalse())
                dispatch(setFortunes(res.data))
@@ -56,20 +57,70 @@ const FortuneGenerator = () => {
       }
    }, [includeUserFortunes])
 
-
    return (
-      <div className="page-div">
-         <h2>Are you ready to see your members-only fortune?</h2>
-         <button className='random-button' onClick={getRandomFortune}>Random Fortune</button>
-         <div>
-            <input
-               type="checkbox"
-               id="include-checkbox"
-               onClick={toggleChecked}
-            />
-            <label htmlFor="include-checkbox">Include user created fortunes</label>
-         </div>
-         <h1>{focusedFortune ? focusedFortune.text : ''}</h1>
+      <div
+         style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            minHeight: 'calc(100vh - 90px)',
+            background: 'black',
+            marginTop: '90px',
+         }}
+      >
+         <Paper
+            elevation={3}
+            style={{
+               minWidth: 600,
+               width: '60%',
+               minHeight: '80%',
+               display: 'flex',
+               flexDirection: 'column',
+               alignItems: 'center',
+               gap: 15,
+               padding: '5%',
+               marginTop: 'calc(0.15 * (100vh - 90px))',
+            }}
+         >
+            <div
+               style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '5px',
+                  marginBottom: '25px',
+               }}
+            >
+               <Typography
+                  variant="h5"
+                  style={{ fontWeight: 'bold', fontSize: '30px' }}
+               >
+                  Are you ready to see your fortune?
+               </Typography>
+               <Button
+                  variant="contained"
+                  onClick={getRandomFortune}
+                  style={{
+                     boxShadow: 'none',
+                     textTransform: 'none',
+                     width: '400px',
+                     fontSize: '25px',
+                  }}
+               >
+                  Get random fortune
+               </Button>
+
+               <FormGroup>
+                  <FormControlLabel
+                     control={<Checkbox onChange={toggleChecked} />}
+                     label="Include user-added Fortunes"
+                  />
+               </FormGroup>
+            </div>
+
+            <h2 style={{textAlign: 'center',}}>{focusedFortune ? focusedFortune.text : ''}</h2>
+         </Paper>
       </div>
    )
 }

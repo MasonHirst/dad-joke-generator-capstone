@@ -7,8 +7,9 @@ const BlackPage = ({ children }) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '100vh',
+            minHeight: 'calc(100vh - 90px)',
             background: 'black',
+            marginTop: '90px',
          }}
       >
          {children}

@@ -31,9 +31,12 @@ const SignUpPasswordPage = () => {
                if (data[0] === 'lowercase') setErrorMessage('Password must contain lowercase letters')
                if (data[0] === 'oneOf') setErrorMessage('Password is too common')
                if (data[0] === 'digits') setErrorMessage('Password must contain a digit')
-            } else if (data === 'not a valid email format') {
-               alert("not a valid email format")
-            } else {
+               if (data[0] === 'spaces') setErrorMessage('Password cannot contain spaces')
+            } else if (data === 'server says email is not valid') {
+               setErrorMessage("Not a valid email format")
+            } else if (data === 'email already in use') {
+               setErrorMessage('Email already in use')
+            } else if (typeof data === 'object') {
                setErrorMessage(null)
                navigate('/signup/success', {state: {id: data.id}})
             }

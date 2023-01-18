@@ -63,20 +63,18 @@ module.exports = {
       let messages = schema.validate(password, { list: true })
 
       try {
-         if (isEmail(email)) {
-            console.log('email good')
-         } else {
-            return res.status(200).send('server says email is not valid')
-         }
+         if (isEmail(email)) console.log('email good')
+         else return res.status(200).send('server says email is not valid')
 
-         if (validPassword) {
-            console.log('password good')
-         } else {
-            return res.status(200).send(messages)
-         }
+         if (validPassword) console.log('password good')
+         else return res.status(200).send(messages)
 
          const salt = bcrypt.genSaltSync(10)
          const hash = bcrypt.hashSync(password, salt)
+
+         let findUser = await User.findOne({ where: {email: email}})
+         console.log('............----------------............', findUser)
+         if (findUser) return res.status(200).send('email already in use')
 
          let createUser = await User.create({
             email,

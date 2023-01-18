@@ -8,6 +8,8 @@ const HeaderButton = ({ href, children }) => {
    return (
       <Button variant="text" onClick={() => navigate(href)} style={{
                   color: 'white',
+                  fontWeight: '600',
+                  fontSize: '15px',
                }}>
          {children}
       </Button>

@@ -1,10 +1,42 @@
 import React from 'react'
 
+import { Typography } from '@mui/material'
+
 const FortuneCard = ({ fortune }) => {
    return (
-      <div className="fortune-card-div">
-         <h3>{fortune.text}</h3>
-         <p>{fortune.userAdded && 'Submitted by a user' }</p>
+      <div style={{ margin: '25px 0' }}>
+         <Typography
+            variant="body1"
+            style={{ color: 'white', fontSize: '20px', fontWeight: '600' }}
+         >
+            {fortune.text}
+         </Typography>
+         <div>
+            {fortune?.user?.username ? (
+               <Typography
+                  style={{
+                     color: 'white',
+                     display: 'inline',
+                     fontSize: '17px',
+                     marginLeft: '20px',
+                     fontStyle: 'italic',
+                  }}
+               >
+                  Submitted by{' '}
+                  <Typography
+                     style={{
+                        color: 'white',
+                        display: 'inline',
+                        fontWeight: 'bold',
+                     }}
+                  >
+                     {fortune?.user?.username}
+                  </Typography>
+               </Typography>
+            ) : (
+               ''
+            )}
+         </div>
       </div>
    )
 }
