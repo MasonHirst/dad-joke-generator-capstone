@@ -525,6 +525,7 @@ const allUsers = [
       hashedPass: '$2b$10$Xlv.p/BJ/vPDe/lrxPI56enfh1HZ815lzO4ClNlhdPEd5M/uG1zcm',
       confirmedAccount: true,
       admin: true,
+      oneTimePass: null,
    },
    {
       email: 'jack@gmail.com',
@@ -532,6 +533,7 @@ const allUsers = [
       hashedPass: '$2b$10$YCbxbszwfM6vveR3YMhzP.kQtpFAvM66YJZKx6PVKH7H9NsnDgRxu',
       confirmedAccount: true,
       admin: false,
+      oneTimePass: null,
    },
 ]
 

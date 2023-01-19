@@ -41,12 +41,12 @@ const FortuneCard = ({ fortune, user, favs }) => {
                <ClipLoader color="yellow" size={15} />
             ) : favorite ? (
                <AiFillStar
-                  style={{ color: 'yellow', width: '20px', height: '20px' }}
+                  style={{ color: 'yellow', width: '30px', height: '30px' }}
                   onClick={toggleFav}
                />
             ) : (
                <AiOutlineStar
-                  style={{ color: 'yellow', width: '20px', height: '20px' }}
+                  style={{ color: 'yellow', width: '30px', height: '30px' }}
                   onClick={toggleFav}
                />
             )}

@@ -79,6 +79,7 @@ module.exports = {
             hashedPass: hash,
             confirmedAccount: false,
             admin: false,
+            oneTimePass: null,
          })
          console.log('-------------------------', createUser)
 

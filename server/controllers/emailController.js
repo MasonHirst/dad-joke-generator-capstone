@@ -1,0 +1,91 @@
+const SibApiV3Sdk = require('sib-api-v3-sdk')
+require('dotenv').config()
+const bcrypt = require('bcrypt')
+const { User, Favorite, Fortune } = require('../util/models')
+const { SEND_IN_BLUE_FIRST_API_KEY } = process.env
+
+module.exports = {
+   accountConfirmEmail: async (req, res) => {
+      const { id } = req.body
+      try {
+         let oneTimePass = Math.floor(Math.random() * 1000000)
+         const salt = bcrypt.genSaltSync(10)
+         const hash = bcrypt.hashSync(oneTimePass.toString(), salt)
+
+         let added = await User.update({ oneTimePass: hash }, { where: { id } })
+         console.log('ADDED: ', added)
+
+         SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
+            SEND_IN_BLUE_FIRST_API_KEY
+
+         new SibApiV3Sdk.TransactionalEmailsApi()
+            .sendTransacEmail({
+               subject: 'Hello from the Node SDK!',
+               sender: {
+                  email: 'authentication@LiveCode.com',
+                  name: 'LiveCode',
+               },
+               replyTo: {
+                  email: 'authentication@LiveCode.com',
+                  name: 'LiveCode',
+               },
+               to: [{ name: 'Mason Hirst', email: 'mhirstdev@gmail.com' }],
+               htmlContent:
+                  `<html><body><h1>This is a transactional email <br><h3>{{params.bodyMessage}}<h1>${oneTimePass}</h1></h3></h1></body></html>`,
+               params: { bodyMessage: `Your one time password: ` },
+            })
+            .then(
+               function (data) {
+                  console.log(data)
+                  return res.status(200).send('you made it!')
+               },
+               function (error) {
+                  console.error(error)
+               }
+            )
+      } catch (err) {
+         console.log(err)
+         res.status(403).send(err)
+      }
+   },
+
+   compareOneTimePass: async (req, res) => {
+      const { id, pass } = req.body
+      try {
+         let user = await User.findOne({where: { id }})
+         authenticated = bcrypt.compareSync(pass, user.oneTimePass)
+         if (authenticated) {
+            let removed = await User.update({ oneTimePass: null }, { where: { id } })
+            res.status(200).send(removed)
+         }
+
+      } catch (err) {
+         console.log(err)
+         res.status(403).send(err)
+      }
+   }
+}
+
+// SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
+//    SEND_IN_BLUE_FIRST_API_KEY
+
+// console.log('-----------------------------------------------------------------')
+
+// new SibApiV3Sdk.TransactionalEmailsApi()
+//    .sendTransacEmail({
+//       subject: 'Hello from the Node SDK!',
+//       sender: { email: 'authentication@LiveCode.com', name: 'LiveCode' },
+//       replyTo: { email: 'authentication@LiveCode.com', name: 'LiveCode' },
+//       to: [{ name: 'Mason Hirst', email: 'mhirstdev@gmail.com' }],
+//       htmlContent:
+//          '<html><body><h1>This is a transactional email {{params.bodyMessage}}</h1></body></html>',
+//       params: { bodyMessage: 'Made just for you!' },
+//    })
+//    .then(
+//       function (data) {
+//          console.log(data)
+//       },
+//       function (error) {
+//          console.error(error)
+//       }
+//    )

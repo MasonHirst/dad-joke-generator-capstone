@@ -23,6 +23,7 @@ const User = db.define('user', {
    },
    confirmedAccount: DataTypes.BOOLEAN,
    admin: DataTypes.BOOLEAN,
+   oneTimePass: DataTypes.STRING({ length: 500 })
 })
 
 const Fortune = db.define('fortune', {

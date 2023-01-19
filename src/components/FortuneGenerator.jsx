@@ -80,6 +80,7 @@ const FortuneGenerator = () => {
                alignItems: 'center',
                gap: 15,
                padding: '5%',
+               paddingTop: '35px',
                marginTop: 'calc(0.1 * (100vh - 90px))',
             }}
          >
@@ -147,7 +148,7 @@ const FortuneGenerator = () => {
                      alignItems: 'center',
                      justifyContent: 'center',
                      backgroundColor: '#d3d3d3',
-                     height: '75px',
+                     height: '65px',
                      width: '100%',
                      zIndex: '1',
                   }}
