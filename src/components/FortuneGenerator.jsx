@@ -87,7 +87,7 @@ const FortuneGenerator = () => {
          {showConfirmMessage ? (
             <div style={{display: 'flex', alignItems: 'center', position: 'absolute', top: '97px', backgroundColor: '#303030', padding: '0 10px', borderRadius: '3px'}}>
                <Typography variant='h6' style={{fontSize: '15px', color: 'white', fontWeight: 'bold',}}>Your email still needs to be verified</Typography>
-               <Button variant='text' onClick={() => navigate('/user/confirm_email', {state: {id: user.id}})} style={{textTransform: 'none', fontWeight: 'bold', fontSize: '15px', color: '', }}>Finish account</Button>
+               <Button variant='text' onClick={() => navigate('/user/confirm_email', {state: {id: user.id, email: user.email, username: user.username}})} style={{textTransform: 'none', fontWeight: 'bold', fontSize: '15px', color: '', }}>Finish account</Button>
                <div style={{color: 'white', fontSize: '20px', paddingBottom: '3px'}}>x</div>
             </div>
          ) : (

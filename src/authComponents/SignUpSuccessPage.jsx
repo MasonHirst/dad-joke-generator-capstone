@@ -32,7 +32,6 @@ const SignUpSuccessPage = ({ setUser, setAccessToken }) => {
                localStorage.setItem('accessToken', data.accessToken)
                axios.post('/accounts/user/email/send_confirm_email', {id: idData, email: emailData, username: input})
                .then(({data}) => {
-                  alert(data)
                   navigate('/')
                })
                .catch(err => {

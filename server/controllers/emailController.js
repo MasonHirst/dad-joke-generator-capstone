@@ -53,10 +53,12 @@ module.exports = {
       try {
          let user = await User.findOne({where: { id }})
          authenticated = bcrypt.compareSync(pass, user.oneTimePass)
+         console.log('one time password authenticated: ', authenticated)
          if (authenticated) {
             let removed = await User.update({ oneTimePass: null }, { where: { id } })
-            res.status(200).send(removed)
-         }
+            await User.update({ confirmedAccount: true }, {where: { id }})
+            return res.status(200).send(removed)
+         } else return res.status(200).send('code incorrect')
 
       } catch (err) {
          console.log(err)

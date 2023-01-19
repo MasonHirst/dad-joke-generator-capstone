@@ -531,7 +531,7 @@ const allUsers = [
       email: 'jack@gmail.com',
       username: 'jackyboy',
       hashedPass: '$2b$10$YCbxbszwfM6vveR3YMhzP.kQtpFAvM66YJZKx6PVKH7H9NsnDgRxu',
-      confirmedAccount: true,
+      confirmedAccount: false,
       admin: false,
       oneTimePass: null,
    },
