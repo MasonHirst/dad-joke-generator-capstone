@@ -6,6 +6,7 @@ import AddFortune from './components/AddFortune'
 import { Authentication } from './context/Authentication'
 import AccountPage from './components/AccountPage'
 import FavoritesPage from './components/FavoritesPage'
+import ConfirmEmailPage from './components/ConfirmEmailPage'
 
 function App() {
    return (
@@ -17,6 +18,7 @@ function App() {
                <Route path="/fortunes/generator" element={<FortuneGenerator />} />
                <Route path="/fortunes/add" element={<AddFortune />}/>
                <Route path="/fortunes/search" element={<FortunesView />} />
+               <Route path="/user/confirm_email" element={<ConfirmEmailPage />} />
                <Route path="*" element={<Navigate to="/fortunes/generator" />} />
             </Routes>
       </Authentication>

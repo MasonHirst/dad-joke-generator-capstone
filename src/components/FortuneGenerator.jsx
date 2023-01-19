@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { getUser } from '../data'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
 import cookieLeft from '../assets/FortuneCookieLeft.png'
 import cookieRight from '../assets/FortuneCookieRight.png'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import { Typography } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
@@ -15,18 +18,31 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Paper from '@mui/material/Paper'
 
 const FortuneGenerator = () => {
+   const navigate = useNavigate()
    const dispatch = useDispatch()
    let currentFortunes = useSelector(selectFortunes)
    let baseURL = 'http://localhost:3339'
 
+   const [user, setUser] = useState(null)
    const [focusedFortune, setFocusedFortune] = useState(null)
    const [includeUserFortunes, setIncludeUserFortunes] = useState(false)
+   const [showConfirmMessage, setShowConfirmMessage] = useState(false)
 
    const getRandomFortune = () => {
       setFocusedFortune(
          currentFortunes[Math.floor(Math.random() * currentFortunes.length)]
       )
    }
+
+   useEffect(() => {
+      async function getData() {
+         let userData = await getUser()
+         setUser(userData)
+         if (userData.confirmedAccount === true) setShowConfirmMessage(false)
+         else setShowConfirmMessage(true)
+      }
+      getData()
+   }, [])
 
    const toggleChecked = () => {
       setIncludeUserFortunes(!includeUserFortunes)
@@ -40,7 +56,6 @@ const FortuneGenerator = () => {
             .then((res) => {
                dispatch(setLoadingFalse())
                dispatch(setFortunes(res.data))
-               // console.log(res.data)
             })
             .catch((err) => [console.log(err)])
       } else {
@@ -50,7 +65,6 @@ const FortuneGenerator = () => {
             .then((res) => {
                dispatch(setLoadingFalse())
                dispatch(setFortunes(res.data))
-               // console.log(res.data)
             })
             .catch((err) => {
                console.log(err)
@@ -67,8 +81,18 @@ const FortuneGenerator = () => {
             minHeight: 'calc(100vh - 90px)',
             background: 'black',
             marginTop: '90px',
+            position: 'relative,',
          }}
       >
+         {showConfirmMessage ? (
+            <div style={{display: 'flex', alignItems: 'center', position: 'absolute', top: '97px', backgroundColor: '#303030', padding: '0 10px', borderRadius: '3px'}}>
+               <Typography variant='h6' style={{fontSize: '15px', color: 'white', fontWeight: 'bold',}}>Your email still needs to be verified</Typography>
+               <Button variant='text' onClick={() => navigate('/user/confirm_email', {state: {id: user.id}})} style={{textTransform: 'none', fontWeight: 'bold', fontSize: '15px', color: '', }}>Finish account</Button>
+               <div style={{color: 'white', fontSize: '20px', paddingBottom: '3px'}}>x</div>
+            </div>
+         ) : (
+            ''
+         )}
          <Paper
             elevation={3}
             style={{
@@ -135,11 +159,15 @@ const FortuneGenerator = () => {
                   height: '200px',
                }}
             >
-               <img src={cookieLeft} width="300px" style={{
-                  position: 'relative',
-                  left: '65px',
-                  top: '16px',
-               }} />
+               <img
+                  src={cookieLeft}
+                  width="300px"
+                  style={{
+                     position: 'relative',
+                     left: '65px',
+                     top: '16px',
+                  }}
+               />
                <div
                   style={{
                      borderRadius: '2px',

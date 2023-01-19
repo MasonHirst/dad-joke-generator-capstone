@@ -11,6 +11,7 @@ const SignUpSuccessPage = ({ setUser, setAccessToken }) => {
    const navigate = useNavigate()
    const location = useLocation()
    const idData = location.state.id
+   const emailData = location.state.email
    const inputRef = useRef()
    const [error, setError] = useState(null)
 
@@ -25,10 +26,18 @@ const SignUpSuccessPage = ({ setUser, setAccessToken }) => {
                username: input,
             })
             .then(({ data }) => {
+               console.log('flsjfklj', data)
                setUser(data.user)
                setAccessToken(data.accessToken)
                localStorage.setItem('accessToken', data.accessToken)
-               navigate('/')
+               axios.post('/accounts/user/email/send_confirm_email', {id: idData, email: emailData, username: input})
+               .then(({data}) => {
+                  alert(data)
+                  navigate('/')
+               })
+               .catch(err => {
+                  console.log('ERROR IN THE SIGNUP SUCCESS PAGE', err)
+               })
             })
             .catch((err) => {
                console.log('ERROR IN SIGNUP SUCCESS PAGE', err)

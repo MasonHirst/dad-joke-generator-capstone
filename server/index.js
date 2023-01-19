@@ -35,8 +35,8 @@ server.post('/accounts/validate/login', checkLoginInfo)
 server.get('/accounts/users', findUser)
 server.post('/accounts/users/update/username', updateUsername)
 
-server.post('/accounts/user/email/confirm', accountConfirmEmail)
-server.post('/accounts/user/email/one_time_pass', compareOneTimePass)
+server.post('/accounts/user/email/send_confirm_email', accountConfirmEmail)
+server.post('/accounts/user/email/confirm_one_time_pass', compareOneTimePass)
 
 server.get('/random/fortunes', getFortunes)
 server.get('/fortunes/all', getAllFortunes)

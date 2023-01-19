@@ -37,7 +37,7 @@ const SignUpPasswordPage = () => {
                setErrorMessage('Email already in use')
             } else if (typeof data === 'object') {
                setErrorMessage(null)
-               navigate('/signup/success', {state: {id: data.id}})
+               navigate('/signup/success', {state: {id: data.id, email: emailState}})
             }
          })
          .catch((err) => {

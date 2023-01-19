@@ -6,32 +6,31 @@ const { SEND_IN_BLUE_FIRST_API_KEY } = process.env
 
 module.exports = {
    accountConfirmEmail: async (req, res) => {
-      const { id } = req.body
+      const { id, email, username } = req.body
       try {
          let oneTimePass = Math.floor(Math.random() * 1000000)
          const salt = bcrypt.genSaltSync(10)
          const hash = bcrypt.hashSync(oneTimePass.toString(), salt)
 
-         let added = await User.update({ oneTimePass: hash }, { where: { id } })
-         console.log('ADDED: ', added)
+         await User.update({ oneTimePass: hash }, { where: { id } })
 
          SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
             SEND_IN_BLUE_FIRST_API_KEY
 
          new SibApiV3Sdk.TransactionalEmailsApi()
             .sendTransacEmail({
-               subject: 'Hello from the Node SDK!',
+               subject: 'Welcome to Livecode',
                sender: {
-                  email: 'authentication@LiveCode.com',
+                  email: 'authentication@Livecode.com',
                   name: 'LiveCode',
                },
                replyTo: {
-                  email: 'authentication@LiveCode.com',
-                  name: 'LiveCode',
+                  email: 'authentication@Livecode.com',
+                  name: 'Livecode',
                },
-               to: [{ name: 'Mason Hirst', email: 'mhirstdev@gmail.com' }],
+               to: [{ name: username, email: email }],
                htmlContent:
-                  `<html><body><h1>This is a transactional email <br><h3>{{params.bodyMessage}}<h1>${oneTimePass}</h1></h3></h1></body></html>`,
+                  `<html><body><h1>Welcome to Livecode, ${username}! <br><h3>{{params.bodyMessage}}<h1>${oneTimePass}</h1></h3></h1></body></html>`,
                params: { bodyMessage: `Your one time password: ` },
             })
             .then(

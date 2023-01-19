@@ -107,17 +107,17 @@ module.exports = {
          if (user) {
             authenticated = bcrypt.compareSync(password, user.hashedPass)
             delete user.dataValues.hashedPass
-         } else res.status(200).send('incorrect email or password')
+         } else return res.status(200).send('incorrect email or password')
 
          if (authenticated && user) {
             // User is authenticated
             const accessToken = await signAccessToken({ sub: user.id })
 
-            res.status(200).send({
+            return res.status(200).send({
                accessToken,
                user,
             })
-         } else res.status(200).send('incorrect email or password')
+         } else return res.status(200).send('incorrect email or password')
       } catch (err) {
          console.log('HERE I AM LOOK AT ME')
          console.log(err)
