@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
-import { AuthContext } from '../context/Authentication'
+import cookieLeft from '../assets/FortuneCookieLeft.png'
+import cookieRight from '../assets/FortuneCookieRight.png'
 
 import { Typography } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
@@ -72,14 +73,14 @@ const FortuneGenerator = () => {
             elevation={3}
             style={{
                minWidth: 600,
-               width: '60%',
+               width: '80%',
                minHeight: '80%',
                display: 'flex',
                flexDirection: 'column',
                alignItems: 'center',
                gap: 15,
                padding: '5%',
-               marginTop: 'calc(0.15 * (100vh - 90px))',
+               marginTop: 'calc(0.1 * (100vh - 90px))',
             }}
          >
             <div
@@ -94,7 +95,11 @@ const FortuneGenerator = () => {
             >
                <Typography
                   variant="h5"
-                  style={{ fontWeight: 'bold', fontSize: '30px' }}
+                  style={{
+                     fontWeight: 'bold',
+                     fontSize: '30px',
+                     marginBottom: '15px',
+                  }}
                >
                   Are you ready to see your fortune?
                </Typography>
@@ -114,12 +119,53 @@ const FortuneGenerator = () => {
                <FormGroup>
                   <FormControlLabel
                      control={<Checkbox onChange={toggleChecked} />}
-                     label="Include user-added Fortunes"
+                     label="Include user-added fortunes"
                   />
                </FormGroup>
             </div>
 
-            <h2 style={{textAlign: 'center',}}>{focusedFortune ? focusedFortune.text : ''}</h2>
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: 'calc(100% + 250px)',
+                  marginLeft: '15px',
+                  height: '200px',
+               }}
+            >
+               <img src={cookieLeft} width="300px" style={{
+                  position: 'relative',
+                  left: '65px',
+                  top: '16px',
+               }} />
+               <div
+                  style={{
+                     borderRadius: '2px',
+                     display: 'flex',
+                     padding: '0 10px',
+                     alignItems: 'center',
+                     justifyContent: 'center',
+                     backgroundColor: '#d3d3d3',
+                     height: '75px',
+                     width: '100%',
+                     zIndex: '1',
+                  }}
+               >
+                  <h3 style={{ textAlign: 'center', fontSize: '18px' }}>
+                     {focusedFortune ? focusedFortune.text : ''}
+                  </h3>
+               </div>
+               <img
+                  src={cookieRight}
+                  width="300px"
+                  style={{
+                     position: 'relative',
+                     right: '72px',
+                     top: '6px',
+                  }}
+               />
+            </div>
          </Paper>
       </div>
    )

@@ -11,7 +11,6 @@ module.exports = {
          where: { username: req.params.username },
       })
 
-      console.log('USERNAME TAKEN RES: ', usernameTaken)
       if (usernameTaken.length !== 0) {
          res.status(200).send('username taken')
       } else {
@@ -20,13 +19,11 @@ module.exports = {
    },
 
    checkEmailAvailability: async (req, res) => {
-      console.log('you have reached the email checker')
       try {
          if (isEmail(req.params.email)) {
             let emailTaken = await User.findAll({
                where: { email: req.params.email },
             })
-            console.log('------------------------------------', emailTaken)
             if (emailTaken.length !== 0)
                res.status(200).send('email already in use')
             else res.status(200).send('email available')
@@ -128,21 +125,16 @@ module.exports = {
    },
 
    findUser: async (req, res) => {
-      console.log('................find user started')
       try {
          // requireAuth
          const accessToken = req.headers.authorization
          const { sub } = await verifyAccessToken(accessToken)
-         console.log('sub:', sub)
          if (!sub) throw new Error('unauthorized')
          // --------------
-         console.log(1.1)
          const user = await User.findOne({
             where: { id: sub },
          })
          delete user.dataValues.hashedPass
-         console.log(1.2)
-         console.log('RETURNED USER: ', user)
          return res.send(user)
       } catch (err) {
          return res.status(403).send('unauthorized')

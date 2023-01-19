@@ -23,7 +23,6 @@ const SignUpPasswordPage = () => {
             password: inputRef.current.value,
          })
          .then(({ data }) => {
-            console.log(data)
             if (Array.isArray(data)) {
                if (data[0] === 'min') setErrorMessage('Password must be at least 8 characters')
                if (data[0] === 'max') setErrorMessage('Password must be less than 100 characters')

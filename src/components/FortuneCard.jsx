@@ -1,16 +1,63 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { AiFillStar } from 'react-icons/ai'
+import { AiOutlineStar } from 'react-icons/ai'
+import { ClipLoader } from 'react-spinners'
+import axios from 'axios'
 
 import { Typography } from '@mui/material'
 
-const FortuneCard = ({ fortune }) => {
+const FortuneCard = ({ fortune, user, favs }) => {
+   const [favorite, setFavorite] = useState(false)
+   const [loading, setLoading] = useState(false)
+
+   useEffect(() => {
+      if (favs && user) {
+         const isFav = favs.filter(
+            (fav) => fav.userId === user.id && fav.fortuneId === fortune.id
+         )
+         if (isFav.length > 0) setFavorite(true)
+      }
+   }, [favs, user, fortune])
+
+   function toggleFav() {
+      setLoading(true)
+      axios
+         .put('/user/favorites/add', { userId: user.id, fortuneId: fortune.id })
+         .then(({ data }) => {
+            setLoading(false)
+            if (data === 'favorite created') setFavorite(true)
+            else setFavorite(false)
+         })
+         .catch((err) => {
+            console.log('ERROR IN THE FORTUNE CARD', err)
+            setLoading(false)
+         })
+   }
+
    return (
       <div style={{ margin: '25px 0' }}>
-         <Typography
-            variant="body1"
-            style={{ color: 'white', fontSize: '20px', fontWeight: '600' }}
-         >
-            {fortune.text}
-         </Typography>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            {loading ? (
+               <ClipLoader color="yellow" size={15} />
+            ) : favorite ? (
+               <AiFillStar
+                  style={{ color: 'yellow', width: '20px', height: '20px' }}
+                  onClick={toggleFav}
+               />
+            ) : (
+               <AiOutlineStar
+                  style={{ color: 'yellow', width: '20px', height: '20px' }}
+                  onClick={toggleFav}
+               />
+            )}
+
+            <Typography
+               variant="body1"
+               style={{ color: 'white', fontSize: '20px', fontWeight: '600' }}
+            >
+               {fortune.text}
+            </Typography>
+         </div>
          <div>
             {fortune?.user?.username ? (
                <Typography
@@ -20,10 +67,11 @@ const FortuneCard = ({ fortune }) => {
                      fontSize: '17px',
                      marginLeft: '20px',
                      fontStyle: 'italic',
+                     marginLeft: '70px',
                   }}
                >
                   Submitted by{' '}
-                  <Typography
+                  <span
                      style={{
                         color: 'white',
                         display: 'inline',
@@ -31,7 +79,7 @@ const FortuneCard = ({ fortune }) => {
                      }}
                   >
                      {fortune?.user?.username}
-                  </Typography>
+                  </span>
                </Typography>
             ) : (
                ''

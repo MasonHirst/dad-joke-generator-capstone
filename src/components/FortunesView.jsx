@@ -5,6 +5,7 @@ import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import FortuneCard from './FortuneCard'
 import axios from 'axios'
+import { getUser } from '../data'
 
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
@@ -13,13 +14,19 @@ const FortunesView = () => {
    const dispatch = useDispatch()
    let currentFortunes = useSelector(selectFortunes)
    const [inputValue, setInputValue] = useState('')
+   const [user, setUser] = useState(null)
+   const [favs, setFavs] = useState(null)
+
+   async function getData() {
+      let userData = await getUser()
+      setUser(userData)
+   }
 
    useEffect(() => {
       dispatch(setLoadingTrue())
       axios
          .get(`/fortunes/all`)
          .then((res) => {
-            // console.log(res.data)
             dispatch(setLoadingFalse())
             dispatch(setFortunes(res.data))
          })
@@ -27,34 +34,45 @@ const FortunesView = () => {
             dispatch(setLoadingFalse())
             console.log('ERROR IN FORTUNES-VIEW USE-EFFECT', err)
          })
+         getData()
+
+         axios
+            .get(`/fortunes/all/favorites`)
+            .then(({data}) => {
+               setFavs(data)
+            })
+            .catch((err) => {
+               console.log('ERROR IN FORTUNES VIEW: ', err)
+            })
    }, [])
 
    let fortunesDisplay
 
-   if (inputValue.length > 0) {
-      const display = currentFortunes
+      if (inputValue.length > 0) {
+         const display = currentFortunes
          .filter((item) => {
             return item.text.toLowerCase().includes(inputValue.toLowerCase())
          })
          .map((item) => {
-            return <FortuneCard fortune={item} key={item.id} />
+            return <FortuneCard fortune={item} favs={favs} user={user} key={item.id} />
          })
-
-      if (display.length > 0) {
-         fortunesDisplay = display
+         
+         if (display.length > 0) {
+            fortunesDisplay = display
+         } else {
+            fortunesDisplay = <Typography variant='h5' style={{color: 'white', fontSize: '25px', fontWeight: 'bold',}}>No results</Typography>
+         }
       } else {
-         fortunesDisplay = <Typography variant='h5' style={{color: 'white', fontSize: '25px', fontWeight: 'bold',}}>No results</Typography>
+         if (currentFortunes) {
+            const display = currentFortunes.map((item) => {
+               return <FortuneCard fortune={item} favs={favs} user={user} key={item.id} />
+            })
+            
+            fortunesDisplay = display
+            // console.log('fortunes display: ', fortunesDisplay)
+         }
       }
-   } else {
-      if (currentFortunes) {
-         const display = currentFortunes.map((item) => {
-            return <FortuneCard fortune={item} key={item.id} />
-         })
-
-         fortunesDisplay = display
-         // console.log('fortunes display: ', fortunesDisplay)
-      }
-   }
+      
 
    return (
       <div
@@ -62,9 +80,10 @@ const FortunesView = () => {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            minHeight: 'calc(100vh - 90px)',
+            height: 'calc(100vh - 90px)',
             background: 'black',
             marginTop: '90px',
+            overflowY: 'scroll',
          }}
       >
          <div
@@ -80,6 +99,7 @@ const FortunesView = () => {
             <TextField
                variant="outlined"
                fullWidth
+               autoFocus
                placeholder="Search..."
                onChange={(e) => setInputValue(e.target.value)}
                style={{ backgroundColor: 'white', borderRadius: '5px', marginBottom: '25px', }}

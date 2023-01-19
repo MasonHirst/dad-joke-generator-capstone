@@ -23,7 +23,7 @@ Favorite.belongsTo(Fortune)
 
 
 //! Endpoints
-const { getFortunes, getAllFortunes, addFortune, changeUsername } = require('./controllers/userFortunes')
+const { getFortunes, getAllFortunes, addFortune, changeUsername, toggleFavorite, determineFav, getAllFortunesFav, getUserFavs, deleteFav } = require('./controllers/userFortunes')
 const { checkUsernameAvailability, checkEmailAvailability, registerUser, checkEmailValid, checkLoginInfo, findUser, updateUsername } = require('./controllers/authController')
 
 server.get('/accounts/validate/username/:username', checkUsernameAvailability)
@@ -36,8 +36,13 @@ server.post('/accounts/users/update/username', updateUsername)
 
 server.get('/random/fortunes', getFortunes)
 server.get('/fortunes/all', getAllFortunes)
+server.get('/fortunes/all/favorites', getAllFortunesFav)
 server.post('/fortunes/add', addFortune)
 server.put('/accounts/users/change/username', changeUsername)
+server.put('/user/favorites/add', toggleFavorite)
+server.post("/fortunes/favorites/determine", determineFav)
+server.post('/fortunes/get/user/favorites', getUserFavs)
+server.delete('/user/favorites/delete/:id', deleteFav)
 
 
 //! Listen Statement

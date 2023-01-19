@@ -21,15 +21,12 @@ function Login() {
    function checkEmail(e) {
       let input = inputRef.current.value
       e.preventDefault()
-      console.log(input)
 
       axios
          .post('/accounts/find/email', { email: input })
          .then((res) => {
-            console.log(res.data)
             if (res.data === 'email valid') {
                setError(null)
-               console.log('about to navigate')
                navigate('password', { state: { email: input }})
             } else {
                setError('Please enter a valid email')

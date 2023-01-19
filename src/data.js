@@ -10,7 +10,6 @@ api.interceptors.request.use(async (options) => {
 });
 
 export async function getUser() {
-   console.log('Starting the getUser() function')
    const {data} = await api.get(`/accounts/users`)
    return data
 }

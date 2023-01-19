@@ -17,14 +17,12 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
    
    function checkLogin(e) {
       e.preventDefault()
-      console.log(emailState)
       axios
          .post('/accounts/validate/login', {
             email: emailState,
             password: inputRef.current.value,
          })
          .then(({ data }) => {
-            console.log(data)
             if (typeof data === 'object') {
                setError(null)
                setUser(data.user)
@@ -39,8 +37,6 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
             console.log(err)
          })
       }      
-
-      console.log(emailState)
       
       return (
       <AuthModal>

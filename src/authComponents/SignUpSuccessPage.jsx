@@ -25,7 +25,6 @@ const SignUpSuccessPage = ({ setUser, setAccessToken }) => {
                username: input,
             })
             .then(({ data }) => {
-               console.log(data)
                setUser(data.user)
                setAccessToken(data.accessToken)
                localStorage.setItem('accessToken', data.accessToken)

@@ -10,7 +10,6 @@ const ForgotPasswordPage = () => {
    const inputRef = useRef()
 
    function checkEmail() {
-      console.log('reached the checkEmail function')
    }
 
    return (

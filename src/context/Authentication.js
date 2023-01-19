@@ -16,7 +16,6 @@ export function Authentication({ children }) {
 
    useEffect(() => {
       const token = localStorage.getItem('accessToken')
-      console.log('FROM STORAGE: ', token)
       if (token) {
          setAccessToken(token)
          getUser()
@@ -26,9 +25,8 @@ export function Authentication({ children }) {
    // 1. save token to local storage
    // 2. on page refresh, fetch token from local storate and set it to state
    // 3. if token exists, use it to fetch user
-
    return (
-      <AuthContext.Provider value={{ user, accessToken }}>
+      <AuthContext.Provider value={{ user, accessToken, children }}>
          {accessToken ? (
             children
          ) : (

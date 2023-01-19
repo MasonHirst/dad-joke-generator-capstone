@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import BlackPage from '../style/BlackBackground'
 import { getUser } from '../data'
 import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 import { ClipLoader } from 'react-spinners'
 import { Paper } from '@mui/material'
@@ -12,15 +14,18 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 
 const AccountPage = () => {
+   const loc = useLocation()
    const [user, setUser] = useState(false)
    const [editName, setEditName] = useState(false)
    const [newName, setNewName] = useState(null)
    const [errorMessage, setErrorMessage] = useState(null)
    const [loadUser, setLoadUser] = useState(false)
+   const [error, setError] = useState(null)
 
-   function handleNewName() {
-      console.log(newName)
+   function handleNewName(e) {
+      e.preventDefault()
       if (newName.length > 1) {
+         setError(null)
          axios
             .put('/accounts/users/change/username', {
                token: localStorage.getItem('accessToken'),
@@ -31,10 +36,19 @@ const AccountPage = () => {
                setNewName('')
                setEditName(false)
                setLoadUser(!loadUser)
+               Swal.fire({
+                  title: 'Success!',
+                  text: 'Username was successfully updated',
+                  icon: 'success',
+               }).then(() => {
+                  window.location.href = loc.pathname
+               })
             })
             .catch((err) => {
                console.log('ERROR IN THE ACCOUNT PAGE: ', err)
             })
+      } else {
+         setError('Username must be at least 2 characters')
       }
    }
 
@@ -45,6 +59,8 @@ const AccountPage = () => {
       }
       getData()
    }, [loadUser])
+
+   console.log('userState:', user.username)
 
    return (
       <BlackPage>
@@ -80,35 +96,48 @@ const AccountPage = () => {
                }}
             >
                {editName ? (
-                  <div
-                     style={{
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '10px',
-                     }}
-                  >
-                     <TextField
-                        variant="standard"
-                        label="New Display Name"
-                        style={{ width: '30%' }}
-                        onChange={(e) => setNewName(e.target.value)}
-                        value={newName}
-                     />
-                     <Button
-                        variant="text"
-                        onClick={() => setEditName(false)}
-                        style={{ fontSize: '15px', fontWeight: 'bold' }}
+                  <div>
+                     <div
+                        style={{
+                           width: '100%',
+                           display: 'flex',
+                           justifyContent: 'center',
+                           gap: '10px',
+                        }}
                      >
-                        Cancel
-                     </Button>
-                     <Button
-                        variant="text"
-                        onClick={handleNewName}
-                        style={{ fontSize: '15px', fontWeight: 'bold' }}
-                     >
-                        Save
-                     </Button>
+                        <form
+                           onSubmit={handleNewName}
+                           style={{
+                              width: '100%',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              gap: '10px',
+                           }}
+                        >
+                           <TextField
+                              variant="standard"
+                              label="New Display Name"
+                              style={{ width: '200px' }}
+                              onChange={(e) => setNewName(e.target.value)}
+                              value={newName}
+                           />
+                           <Button
+                              variant="text"
+                              type="submit"
+                              style={{ fontSize: '15px', fontWeight: 'bold' }}
+                           >
+                              Save
+                           </Button>
+                        </form>
+                        <Button
+                           variant="text"
+                           onClick={() => setEditName(false)}
+                           style={{ fontSize: '15px', fontWeight: 'bold' }}
+                        >
+                           Cancel
+                        </Button>
+                     </div>
+                     {error ? <Typography style={{color: 'red', marginLeft: '15px'}}>{error}</Typography> : ''}
                   </div>
                ) : (
                   <div

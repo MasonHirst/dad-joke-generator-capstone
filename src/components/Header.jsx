@@ -58,7 +58,8 @@ const Header = () => {
             background: 'black',
             position: 'fixed',
             width: '100vw',
-            top: 0
+            top: 0,
+            zIndex: 2,
          }}
       >
          <Link to="/">

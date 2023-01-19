@@ -24,7 +24,6 @@ const SignUpPage = () => {
       axios
          .get(`/accounts/validate/email/${input}`)
          .then(({data}) => {
-            console.log(data)
             if (data === 'email already in use') {
                setErrorState('Email already in use')
             } else if (data === 'not a valid email format') {
@@ -146,36 +145,3 @@ const SignUpPage = () => {
 }
 
 export default SignUpPage
-
-
-
-// let body = {
-//    username: usernameSlice,
-//    email: emailSlice,
-//    password: passwordSlice,
-// }
-
-// axios
-//    .post('/accounts/createUser', body)
-//    .then((res) => {
-//       console.log(res.data)
-//       if (res.data === 'user can be created') {
-//          Swal.fire({
-//             title: 'Congrats!',
-//             text: res.data,
-//             icon: 'success',
-//          })
-//          dispatch(clearSignUpInput())
-//       } else {
-//          Swal.fire({
-//             title: 'Wrong!',
-//             text: res.data,
-//             icon: 'error',
-//          })
-//       }
-//    })
-//    .catch((err) => {
-//       console.log('ERROR IN SIGNUPPAGE: ', err)
-//    })
-
-// console.log(currentSlice)

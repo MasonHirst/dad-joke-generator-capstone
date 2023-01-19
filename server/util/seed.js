@@ -509,19 +509,19 @@ const allFortunes = [
    {
       text: `He who eats chinese restaurant is happy`,
       userAdded: true,
-      userId: 2,
+      userId: 1,
    },
    {
-      text: `To fart without shame is to live`,
+      text: `Not panicking when stressfull things happen is the mark of a good leader`,
       userAdded: true,
-      userId: 1,
+      userId: 2,
    },
 ]
 
 const allUsers = [
    {
       email: 'mhirstdev@gmail.com',
-      username: "admin",
+      username: "Mason",
       hashedPass: '$2b$10$Xlv.p/BJ/vPDe/lrxPI56enfh1HZ815lzO4ClNlhdPEd5M/uG1zcm',
       confirmedAccount: true,
       admin: true,
