@@ -25,11 +25,14 @@ const FortuneGenerator = () => {
    const [focusedFortune, setFocusedFortune] = useState(null)
    const [includeUserFortunes, setIncludeUserFortunes] = useState(false)
    const [hideMessage, setHideMessage] = useState(false)
+   const [gotFortunes, setGotFortune] = useState(false)
 
    const getRandomFortune = () => {
-      setFocusedFortune(
-         currentFortunes[Math.floor(Math.random() * currentFortunes.length)]
-      )
+      if (currentFortunes) {
+         setFocusedFortune(
+            currentFortunes[Math.floor(Math.random() * currentFortunes.length)]
+         )
+      }
    }
 
    const toggleChecked = () => {
@@ -44,6 +47,7 @@ const FortuneGenerator = () => {
             .then((res) => {
                dispatch(setLoadingFalse())
                dispatch(setFortunes(res.data))
+               setGotFortune(true)
             })
             .catch((err) => [console.log(err)])
       } else {
@@ -53,12 +57,17 @@ const FortuneGenerator = () => {
             .then((res) => {
                dispatch(setLoadingFalse())
                dispatch(setFortunes(res.data))
+               setGotFortune(true)
             })
             .catch((err) => {
                console.log(err)
             })
       }
    }, [includeUserFortunes])
+
+   useEffect(() => {
+      getRandomFortune()
+   }, [gotFortunes])
 
    return (
       <div
@@ -73,63 +82,66 @@ const FortuneGenerator = () => {
          }}
       >
          {user.confirmedAccount === false ? (
-            hideMessage ? '' : (
-            <div
-               style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  position: 'absolute',
-                  top: '97px',
-                  gap: '10px',
-                  backgroundColor: '#303030',
-                  padding: '2px 10px',
-                  borderRadius: '3px',
-               }}
-            >
-               <Typography
-                  variant="h6"
+            hideMessage ? (
+               ''
+            ) : (
+               <div
                   style={{
-                     fontSize: '15px',
-                     color: 'white',
-                     fontWeight: 'bold',
+                     display: 'flex',
+                     alignItems: 'center',
+                     position: 'absolute',
+                     top: '97px',
+                     gap: '10px',
+                     backgroundColor: '#303030',
+                     padding: '2px 10px',
+                     borderRadius: '3px',
                   }}
                >
-                  Your email still needs to be verified
-               </Typography>
-               <Button
-                  variant="text"
-                  onClick={() =>
-                     navigate('/user/confirm_email', {
-                        state: {
-                           id: user.id,
-                           email: user.email,
-                           username: user.username,
-                        },
-                     })
-                  }
-                  style={{
-                     textTransform: 'none',
-                     fontWeight: 'bold',
-                     fontSize: '15px',
-                     color: '',
-                  }}
-               >
-                  Finish account
-               </Button>
-               <Button
-                  onClick={() => setHideMessage(true)}
-                  variant="text"
-                  style={{
-                     textTransform: 'none',
-                     fontWeight: 'bold',
-                     fontSize: '15px',
-                     color: '',
-                  }}
-               >
-                  dismiss
-               </Button>
-            </div>
-         )) : (
+                  <Typography
+                     variant="h6"
+                     style={{
+                        fontSize: '15px',
+                        color: 'white',
+                        fontWeight: 'bold',
+                     }}
+                  >
+                     Your email still needs to be verified
+                  </Typography>
+                  <Button
+                     variant="text"
+                     onClick={() =>
+                        navigate('/user/confirm_email', {
+                           state: {
+                              id: user.id,
+                              email: user.email,
+                              username: user.username,
+                           },
+                        })
+                     }
+                     style={{
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '15px',
+                        color: '',
+                     }}
+                  >
+                     Finish account
+                  </Button>
+                  <Button
+                     onClick={() => setHideMessage(true)}
+                     variant="text"
+                     style={{
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '15px',
+                        color: '',
+                     }}
+                  >
+                     dismiss
+                  </Button>
+               </div>
+            )
+         ) : (
             ''
          )}
          <Paper
@@ -198,13 +210,11 @@ const FortuneGenerator = () => {
                   maxWidth: '90%',
                }}
             >
-               <img src={dadHead} width="350px" />
+               <img src={dadHead} width="250px" />
                <h3
                   style={{
                      textAlign: 'center',
                      fontSize: '18px',
-                     position: 'relative',
-                     left: '-95px',
                   }}
                >
                   {focusedFortune ? focusedFortune.text : ''}
