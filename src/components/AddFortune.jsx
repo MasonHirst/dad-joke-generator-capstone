@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
 import Swal from 'sweetalert2'
+import { AuthContext } from '../context/Authentication'
 
 import BlackPage from '../style/BlackBackground'
 import { Paper } from '@mui/material'
@@ -11,6 +12,7 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 
 const AddFortune = () => {
+   const { user } = useContext(AuthContext)
    const dispatch = useDispatch()
    const [inputValue, setInputValue] = useState('')
 
@@ -20,8 +22,7 @@ const AddFortune = () => {
       let obj = {
          text: inputValue,
          userAdded: true,
-         userId: null,
-         //! come back later and add functionality to grab the logged in user id
+         userId: user.id,
       }
 
       if (inputValue.length > 4) {
@@ -81,11 +82,12 @@ const AddFortune = () => {
                <TextField
                   variant="outlined"
                   fullWidth
+                  inputProps={{maxLength: 120}}
                   label="Your inspiring fortune"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                />
-               <Button variant="contained" fullWidth style={{ height: '55px' }}>
+               <Button variant="contained" type='submit' fullWidth style={{ height: '55px' }}>
                   Submit Fortune
                </Button>
             </form>

@@ -66,9 +66,11 @@ const FavoriteCard = ({ fav }) => {
                         color: 'black',
                         display: 'inline',
                         fontSize: '17px',
-                        marginLeft: '20px',
+                        marginLeft: '30px',
                         fontStyle: 'italic',
                         marginLeft: '70px',
+                        position: 'relative',
+                        left: '20px',
                      }}
                   >
                      Submitted by{' '}

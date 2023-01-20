@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import BlackPage from '../style/BlackBackground'
 import { getUser } from '../data'
 import axios from 'axios'
@@ -12,15 +12,20 @@ import { teal } from '@mui/material/colors'
 import { Typography } from '@mui/material'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import { AuthContext } from '../context/Authentication'
 
 const AccountPage = () => {
    const loc = useLocation()
-   const [user, setUser] = useState(false)
+   const { user } = useContext(AuthContext)
    const [editName, setEditName] = useState(false)
    const [newName, setNewName] = useState(null)
    const [errorMessage, setErrorMessage] = useState(null)
-   const [loadUser, setLoadUser] = useState(false)
    const [error, setError] = useState(null)
+   const [editPassword, setEditPassword] = useState(false)
+   const currPassRef = useRef()
+   const newPassRef = useRef()
+   const [passError, setPassError] = useState(null)
+   const [passError2, setPassError2] = useState(null)
 
    function handleNewName(e) {
       e.preventDefault()
@@ -32,10 +37,9 @@ const AccountPage = () => {
                username: newName,
             })
             .then(({ data }) => {
-               console.log(data)
                setNewName('')
                setEditName(false)
-               setLoadUser(!loadUser)
+
                Swal.fire({
                   title: 'Success!',
                   text: 'Username was successfully updated',
@@ -52,15 +56,65 @@ const AccountPage = () => {
       }
    }
 
-   useEffect(() => {
-      async function getData() {
-         let data = await getUser()
-         setUser(data)
+   function handleNewPassSubmit(e) {
+      e.preventDefault()
+      let input1 = currPassRef.current.value
+      let input2 = newPassRef.current.value
+      if (input1 === input2) {
+         setPassError2('New password cannot match current password')
+         return
       }
-      getData()
-   }, [loadUser])
+      if (input1.length < 1) {
+         setPassError('Field cannot be blank')
+         return
+      } else setPassError(null)
+      if (input2.length < 1) {
+         setPassError2('Field cannot be blank')
+         return
+      } else setPassError2(null)
 
-   console.log('userState:', user.username)
+      axios
+         .put('/accounts/users/update/password', {
+            accessToken: localStorage.getItem('accessToken'),
+            currPass: input1,
+            newPass: input2,
+         })
+         .then(({ data }) => {
+            console.log(data)
+            if (Array.isArray(data)) {
+               if (data[0] === 'min')
+                  setPassError2('Password must be at least 8 characters')
+               if (data[0] === 'max')
+                  setPassError2('Password must be less than 100 characters')
+               if (data[0] === 'uppercase')
+                  setPassError2('Password must contain uppercase letters')
+               if (data[0] === 'lowercase')
+                  setPassError2('Password must contain lowercase letters')
+               if (data[0] === 'oneOf') setPassError2('Password is too common')
+               if (data[0] === 'digits')
+                  setPassError2('Password must contain a digit')
+               if (data[0] === 'spaces')
+                  setPassError2('Password cannot contain spaces')
+            } else if (data === 'Password updated') {
+               console.log('updated')
+               setEditPassword(false)
+               setPassError(null)
+               setPassError2(null)
+               Swal.fire({
+                  icon: 'success',
+                  title: 'Password updated',
+               })
+            } else if (data === 'Current password incorrect')
+               setPassError('Password incorrect')
+            else
+               console.log(
+                  'something else happened in account change password function'
+               )
+         })
+         .catch((err) => {
+            console.log('ERROR IN THE CHANGE PASSWORD FUNCTION: ', err)
+         })
+   }
 
    return (
       <BlackPage>
@@ -119,12 +173,12 @@ const AccountPage = () => {
                               label="New Display Name"
                               style={{ width: '200px' }}
                               onChange={(e) => setNewName(e.target.value)}
-                              value={newName}
+                              value={newName || ""}
                            />
                            <Button
                               variant="text"
                               type="submit"
-                              style={{ fontSize: '15px', fontWeight: 'bold' }}
+                              style={{ fontSize: '15px', fontWeight: 'bold' }}   
                            >
                               Save
                            </Button>
@@ -137,7 +191,15 @@ const AccountPage = () => {
                            Cancel
                         </Button>
                      </div>
-                     {error ? <Typography style={{color: 'red', marginLeft: '15px'}}>{error}</Typography> : ''}
+                     {error ? (
+                        <Typography
+                           style={{ color: 'red', marginLeft: '15px' }}
+                        >
+                           {error}
+                        </Typography>
+                     ) : (
+                        ''
+                     )}
                   </div>
                ) : (
                   <div
@@ -186,6 +248,121 @@ const AccountPage = () => {
                   )}
                </Typography>
             </div>
+            {editPassword ? (
+               <div style={{display: 'flex', width: '100%', flexDirection: 'column', alignItems: 'center', gap: '10px',}}>
+                  <form
+                     onSubmit={handleNewPassSubmit}
+                     style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '15px',
+                        alignItems: 'center',
+                        width: '80%',
+                     }}
+                  >
+                     <div
+                        style={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           width: '100%',
+                        }}
+                     >
+                        <TextField
+                           variant="outlined"
+                           label="Current password"
+                           type="password"
+                           autoFocus
+                           fullWidth
+                           inputProps={{
+                              ref: currPassRef,
+                           }}
+                        />
+                        {passError ? (
+                           <p
+                              style={{
+                                 color: 'red',
+                                 marginTop: '5px',
+                                 marginLeft: '15px',
+                                 marginBottom: '0px',
+                                 fontSize: '14px',
+                              }}
+                           >
+                              {passError}
+                           </p>
+                        ) : (
+                           ''
+                        )}
+                     </div>
+                     <div
+                        style={{
+                           display: 'flex',
+                           flexDirection: 'column',
+                           width: '100%',
+                        }}
+                     >
+                        <TextField
+                           variant="outlined"
+                           label="New password"
+                           type="password"
+                           fullWidth
+                           inputProps={{
+                              ref: newPassRef,
+                           }}
+                        />
+                        {passError2 ? (
+                           <p
+                              style={{
+                                 color: 'red',
+                                 marginTop: '5px',
+                                 marginLeft: '15px',
+                                 marginBottom: '0px',
+                                 fontSize: '14px',
+                              }}
+                           >
+                              {passError2}
+                           </p>
+                        ) : (
+                           ''
+                        )}
+                     </div>
+                     <Button
+                        variant="contained"
+                        type="submit"
+                        fullWidth
+                        style={{
+                           padding: '13px',
+                           textTransform: 'none',
+                           fontSize: '18px',
+                        }}
+                     >
+                        Change password
+                     </Button>
+                  </form>
+                  <Button
+                     variant="text"
+                     onClick={() => setEditPassword(false)}
+                     style={{
+                        textTransform: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                     }}
+                  >
+                     cancel
+                  </Button>
+               </div>
+            ) : (
+               <Button
+                  variant="text"
+                  onClick={() => setEditPassword(true)}
+                  style={{
+                     textTransform: 'none',
+                     fontWeight: 'bold',
+                     fontSize: '16px',
+                  }}
+               >
+                  Change password
+               </Button>
+            )}
          </Paper>
       </BlackPage>
    )

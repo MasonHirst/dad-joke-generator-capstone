@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import LiveCodeIcon from '../assets/LiveCode-icon.png'
+import LiveCodeIcon from '../assets/DadJokeLogo.png'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
 import TextField from '@mui/material/TextField'
@@ -95,7 +95,7 @@ function Login() {
                </Link>
             </Typography>
          </div>
-         <div
+         {/* <div
             style={{
                marginTop: '20px',
                borderTop: '1px solid grey',
@@ -104,8 +104,8 @@ function Login() {
                display: 'flex',
                justifyContent: 'center',
             }}
-         ></div>
-         <Typography
+         ></div> */}
+         {/* <Typography
             variant="subtitle2"
             style={{
                position: 'relative',
@@ -115,8 +115,8 @@ function Login() {
             }}
          >
             OR
-         </Typography>
-         <div
+         </Typography> */}
+         {/* <div
             style={{
                width: '100%',
                display: 'flex',
@@ -137,7 +137,7 @@ function Login() {
                   Continue with Facebook
                </Typography>
             </SocialButton>
-         </div>
+         </div> */}
       </AuthModal>
    )
 }

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectSignUpInput } from '../redux/slices/signUpInputSlice'
-import LiveCodeIcon from '../assets/LiveCode-icon.png'
+import LiveCodeIcon from '../assets/DadJokeLogo.png'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
 import TextField from '@mui/material/TextField'
@@ -105,8 +105,8 @@ const SignUpPage = () => {
                display: 'flex',
                justifyContent: 'center',
             }}
-         ></div>
-         <Typography
+         ></div> 
+       <Typography
             variant="subtitle2"
             style={{
                position: 'relative',
@@ -116,9 +116,9 @@ const SignUpPage = () => {
             }}
          >
             OR
-         </Typography>
+         </Typography> 
 
-         <div
+          <div
             style={{
                width: '100%',
                display: 'flex',

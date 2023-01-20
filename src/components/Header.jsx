@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
-import LiveCodeIcon from '../assets/LiveCode-icon.png'
+import LiveCodeIcon from '../assets/DadJokeLogo.png'
 import { Link, useNavigate } from 'react-router-dom'
 import HeaderButton from '../style/HeaderButton'
 import { getUser } from '../data'
+import { AuthContext } from '../context/Authentication'
 
 import { Typography } from '@mui/material'
 import Button from '@mui/material/Button'
@@ -11,9 +12,11 @@ import { teal } from '@mui/material/colors'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
+
 const Header = () => {
    const navigate = useNavigate()
-   const [userData, setUserData] = useState(null)
+   const { logout, user } = useContext(AuthContext)
+
    const [anchorEl, setAnchorEl] = useState(null)
    const open = Boolean(anchorEl)
    const handleClick = (event) => {
@@ -28,23 +31,12 @@ const Header = () => {
       navigate('/user/account')
    }
 
-   function handleLogout() {
-      localStorage.clear()
-      window.location.reload(false)
-   }
-
    function handleFav() {
       setAnchorEl(null)
       navigate('/user/favorites')
    }
 
-   useEffect(() => {
-      async function getData() {
-         let user = await getUser()
-         setUserData(user)
-      }
-      getData()
-   }, [])
+
 
    return (
       <div
@@ -63,7 +55,7 @@ const Header = () => {
          }}
       >
          <Link to="/">
-            <img src={LiveCodeIcon} width="200px" alt="Live Code Logo" />
+            <img src={LiveCodeIcon} width="130px" alt="Live Code Logo" />
          </Link>
 
          <div
@@ -74,7 +66,7 @@ const Header = () => {
                gap: 60,
             }}
          >
-            <HeaderButton href={'/fortunes/generator'}>Fortunes</HeaderButton>
+            <HeaderButton href={'/fortunes/generator'}>Jokes</HeaderButton>
             <HeaderButton href={'/fortunes/add'}>Create</HeaderButton>
             <HeaderButton href={'/fortunes/search'}>Search</HeaderButton>
          </div>
@@ -104,12 +96,12 @@ const Header = () => {
                <Typography
                   style={{ fontSize: '25px', textAlign: 'center', margin: '0 15px'}}
                >
-                  {userData ? userData.username : ''}
+                  {user ? user.username : ''}
                </Typography>
                <div style={{margin: '15px', borderBottom: '1px solid grey'}}></div>
                <MenuItem onClick={handleMyAccount}>My Account</MenuItem>
                <MenuItem onClick={handleFav}>Favorites</MenuItem>
-               <MenuItem onClick={handleLogout}>Logout</MenuItem>
+               <MenuItem onClick={logout}>Logout</MenuItem>
             </Menu>
          </div>
       </div>

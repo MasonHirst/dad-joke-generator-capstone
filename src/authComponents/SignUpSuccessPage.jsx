@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { AuthModal } from '../style/AuthModal'
-import Logo from '../assets/LiveCode-icon.png'
+import Logo from '../assets/DadJokeLogo.png'
 import Button from '@mui/material/Button'
 import { TextField } from '@mui/material'
 import { Typography } from '@mui/material'
@@ -26,17 +26,16 @@ const SignUpSuccessPage = ({ setUser, setAccessToken }) => {
                username: input,
             })
             .then(({ data }) => {
-               console.log('flsjfklj', data)
                setUser(data.user)
                setAccessToken(data.accessToken)
                localStorage.setItem('accessToken', data.accessToken)
                axios.post('/accounts/user/email/send_confirm_email', {id: idData, email: emailData, username: input})
-               .then(({data}) => {
-                  navigate('/')
-               })
-               .catch(err => {
-                  console.log('ERROR IN THE SIGNUP SUCCESS PAGE', err)
-               })
+                  .then(({data}) => {
+                     navigate('/')
+                  })
+                  .catch(err => {
+                     console.log('ERROR IN THE SIGNUP SUCCESS PAGE', err)
+                  })
             })
             .catch((err) => {
                console.log('ERROR IN SIGNUP SUCCESS PAGE', err)

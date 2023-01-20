@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import Paper from '@mui/material/Paper'
-import { AuthModal } from '../style/AuthModal'
-import Logo from '../assets/LiveCode-icon.png'
+import Logo from '../assets/DadJokeLogo.png'
 import Button from '@mui/material/Button'
 import { TextField } from '@mui/material'
 import { Typography } from '@mui/material'
@@ -10,12 +9,12 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 
 const ConfirmEmailPage = () => {
+   const navigate = useNavigate()
    const inputRef = useRef()
    const location = useLocation()
    const { id, email, username } = location.state
    const [error, setError] = useState(null)
 
-   console.log(id, email, username)
 
    useEffect(() => {
       axios
@@ -24,7 +23,7 @@ const ConfirmEmailPage = () => {
          pass: inputRef.current.value,
       })
       .then(({ data }) => {
-         
+            
       })
       .catch((err) => {
          console.log('ERROR IN CONFIRM EMAIL PAGE: ', err)
@@ -33,7 +32,6 @@ const ConfirmEmailPage = () => {
 
    function handleSubmit(e) {
       e.preventDefault()
-      console.log(inputRef.current.value)
       axios
          .post('/accounts/user/email/confirm_one_time_pass', {
             id,
@@ -46,9 +44,10 @@ const ConfirmEmailPage = () => {
                   title: 'Yay!',
                   text: 'You confirmed your email address',
                   width: 340,
-                  confirmButtonText: 'Back to Livecode',
+                  confirmButtonText: 'Back to Dad Joke Generator',
                })
                .then((res) => {
+                  navigate('/fortunes/generator')
                   window.location.reload(false)
                })
             } else setError('Incorrect code')

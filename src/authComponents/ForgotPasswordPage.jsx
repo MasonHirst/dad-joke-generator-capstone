@@ -1,15 +1,33 @@
 import React, { useRef } from 'react'
 import { AuthModal } from '../style/AuthModal'
-import Logo from '../assets/LiveCode-icon.png'
+import Logo from '../assets/DadJokeLogo.png'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
+
 import { TextField } from '@mui/material'
 import { Typography } from '@mui/material'
 import { Button } from '@mui/material'
 import { Link } from '@mui/material'
 
 const ForgotPasswordPage = () => {
+   const navigate = useNavigate()
    const inputRef = useRef()
 
-   function checkEmail() {
+   function checkEmail(e) {
+      e.preventDefault()
+      axios.get(`/accounts/user/forgot_password/${inputRef.current.value}`)
+      .then(({data}) => {
+         Swal.fire({
+            icon: 'success',
+            title: 'Email sent',
+            text: 'If a user exists with that email, they will receive a temporary password',
+         })
+         navigate('/login')
+      })
+      .catch(err => {
+         console.log('ERROR IN THE FORGOT PASSWORD PAGE: ', err)
+      })
    }
 
    return (

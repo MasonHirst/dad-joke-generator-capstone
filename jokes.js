@@ -1,6 +1,4 @@
-
-
-const allJokes = [
+jokes = [
    {
       text: `"I'm afraid for the calendar. Its days are numbered."`,
       userAdded: false,
@@ -751,31 +749,3 @@ const allJokes = [
       userId: null,
    },
 ]
-
-const allUsers = [
-   {
-      email: 'mhirstdev@gmail.com',
-      username: "Mason",
-      hashedPass: '$2b$10$Xlv.p/BJ/vPDe/lrxPI56enfh1HZ815lzO4ClNlhdPEd5M/uG1zcm',
-      confirmedAccount: true,
-      admin: true,
-      oneTimePass: null,
-   },
-   {
-      email: 'jack@gmail.com',
-      username: 'jackyboy',
-      hashedPass: '$2b$10$YCbxbszwfM6vveR3YMhzP.kQtpFAvM66YJZKx6PVKH7H9NsnDgRxu',
-      confirmedAccount: false,
-      admin: false,
-      oneTimePass: null,
-   },
-]
-
-
-const seed = async () => {
-   const { Fortune, User } = require('./models')
-   await User.bulkCreate(allUsers)
-   await Fortune.bulkCreate(allJokes)
-}
-
-module.exports = seed

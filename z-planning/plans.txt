@@ -18,3 +18,11 @@ icons next to the inputs when the database query comes back
 
 add a list of requirements beneath each signUp input, and checks or x's by each one as 
 they are passed or not
+
+
+
+
+
+
+to fix!
+- make it send a confirmation email on signup, not just when you click confirm

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
 import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import FortuneCard from './FortuneCard'
 import axios from 'axios'
-import { getUser } from '../data'
+import { AuthContext } from '../context/Authentication'
 
 import TextField from '@mui/material/TextField'
 import { Typography } from '@mui/material'
@@ -14,13 +14,9 @@ const FortunesView = () => {
    const dispatch = useDispatch()
    let currentFortunes = useSelector(selectFortunes)
    const [inputValue, setInputValue] = useState('')
-   const [user, setUser] = useState(null)
+   const { user } = useContext(AuthContext)
    const [favs, setFavs] = useState(null)
 
-   async function getData() {
-      let userData = await getUser()
-      setUser(userData)
-   }
 
    useEffect(() => {
       dispatch(setLoadingTrue())
@@ -34,7 +30,6 @@ const FortunesView = () => {
             dispatch(setLoadingFalse())
             console.log('ERROR IN FORTUNES-VIEW USE-EFFECT', err)
          })
-         getData()
 
          axios
             .get(`/fortunes/all/favorites`)

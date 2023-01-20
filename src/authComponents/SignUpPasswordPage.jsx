@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { AuthModal } from '../style/AuthModal'
 import { TextField } from '@mui/material'
-import Logo from '../assets/LiveCode-icon.png'
+import Logo from '../assets/DadJokeLogo.png'
 import { Typography } from '@mui/material'
 import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'

@@ -10,24 +10,52 @@ import { getUser } from '../data'
 
 export const AuthContext = createContext({})
 
+const tokenKey = 'accessToken'
+const LOADING = "LOADING"
+const AUTHENTICATED = "AUTHENTICATED"
+const NOT_AUTHENTICATED = "NOT_AUTHENTICATED"
+
 export function Authentication({ children }) {
    const [user, setUser] = useState()
    const [accessToken, setAccessToken] = useState()
 
+   const [authState, setAuthState] = useState(LOADING)
+
+   function logout() {
+      localStorage.removeItem(tokenKey)
+      setAccessToken(undefined)
+      setUser(undefined)
+      setAuthState(NOT_AUTHENTICATED)
+      window.location.reload(false)
+   }
+
    useEffect(() => {
-      const token = localStorage.getItem('accessToken')
-      if (token) {
-         setAccessToken(token)
-         getUser()
-      }
+      ;(async () => {
+         try {
+            const token = localStorage.getItem(tokenKey)
+            if (token) {
+               setAccessToken(token)
+               const data = await getUser()
+               setUser(data)
+            } else {
+               setAuthState(NOT_AUTHENTICATED)
+            }
+         } catch(error){
+            console.error('you got an error bro', error)
+         }
+      })()
    }, [])
 
-   // 1. save token to local storage
-   // 2. on page refresh, fetch token from local storate and set it to state
-   // 3. if token exists, use it to fetch user
+   useEffect(() => {
+      if (user && accessToken) setAuthState(AUTHENTICATED)
+   }, [user, accessToken])
+
+
+   if (authState === LOADING)
+      return <div style={{ color: 'white', padding: 10 }}>loading...</div>
    return (
-      <AuthContext.Provider value={{ user, accessToken, children }}>
-         {accessToken ? (
+      <AuthContext.Provider value={{ user, accessToken, authState, logout, children }}>
+         {authState === AUTHENTICATED ? (
             children
          ) : (
             <Routes>
@@ -56,7 +84,7 @@ export function Authentication({ children }) {
                   path="login/forgot_password"
                   element={<ForgotPasswordPage />}
                />
-               <Route path="*" element={<Navigate to="login" />} />
+               <Route path="*" element={<Navigate to="signup" />} />
             </Routes>
          )}
       </AuthContext.Provider>

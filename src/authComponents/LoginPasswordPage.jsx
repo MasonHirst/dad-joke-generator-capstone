@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { AuthModal } from '../style/AuthModal'
 import { TextField } from '@mui/material'
-import Logo from '../assets/LiveCode-icon.png'
+import Logo from '../assets/DadJokeLogo.png'
 import { Typography } from '@mui/material'
 import Link from '@mui/material/Link'
 import Button from '@mui/material/Button'
 import axios from 'axios'
 import { useNavigate, useLocation } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 const LoginPasswordPage = ({ setUser, setAccessToken }) => {
    const navigate = useNavigate()
@@ -14,7 +15,7 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
    const location = useLocation()
    const [emailState, setEmailState] = useState(location.state.email)
    const [error, setError] = useState(null)
-   
+
    function checkLogin(e) {
       e.preventDefault()
       axios
@@ -28,6 +29,13 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
                setUser(data.user)
                setAccessToken(data.accessToken)
                localStorage.setItem('accessToken', data.accessToken)
+               if (inputRef.current.value.length < 8) {
+                  Swal.fire({
+                     icon: 'warning',
+                     title: 'Temporary password used',
+                     text: 'Make sure to update your password in account settings',
+                  })
+               }
                navigate('/')
             } else {
                setError('Incorrect email or password')
@@ -36,9 +44,9 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
          .catch((err) => {
             console.log(err)
          })
-      }      
-      
-      return (
+   }
+
+   return (
       <AuthModal>
          <img src={Logo} width="200px" />
          <Typography
@@ -76,7 +84,12 @@ const LoginPasswordPage = ({ setUser, setAccessToken }) => {
                }}
             />
             {error ? (
-               <Typography variant="subtitle2" style={{color: 'red', marginLeft: '15px'}}>{error}</Typography>
+               <Typography
+                  variant="subtitle2"
+                  style={{ color: 'red', marginLeft: '15px' }}
+               >
+                  {error}
+               </Typography>
             ) : (
                ''
             )}

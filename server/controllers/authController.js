@@ -69,7 +69,7 @@ module.exports = {
          const salt = bcrypt.genSaltSync(10)
          const hash = bcrypt.hashSync(password, salt)
 
-         let findUser = await User.findOne({ where: {email: email}})
+         let findUser = await User.findOne({ where: { email: email } })
          console.log('............----------------............', findUser)
          if (findUser) return res.status(200).send('email already in use')
 
@@ -138,7 +138,7 @@ module.exports = {
          delete user.dataValues.hashedPass
          return res.send(user)
       } catch (err) {
-         return res.status(403).send('unauthorized')
+         return res.status(403).send('findUser function: unauthorized')
       }
    },
 
@@ -146,18 +146,64 @@ module.exports = {
       const { id, username } = req.body
       try {
          if (username.length > 1) {
-            await User.update(
-               { username: username },
-               { where: { id: id } }
-            )
+            await User.update({ username: username }, { where: { id: id } })
 
-            const user = await User.findOne({where: { id }})
-            
+            const user = await User.findOne({ where: { id } })
+
             const accessToken = await signAccessToken({ sub: id })
-            res.status(200).send({accessToken, user})
+            res.status(200).send({ accessToken, user })
          } else {
             res.status(200).send('Username must be at least 2 characters')
          }
+      } catch (err) {
+         console.log(err)
+         res.status(403).send(err)
+      }
+   },
+
+   changePassword: async (req, res) => {
+      const { accessToken, currPass, newPass } = req.body
+      try {
+         const { sub } = await verifyAccessToken(accessToken)
+         if (sub) {
+            let user = await User.findOne({ where: { id: sub } })
+            let pass1Good = bcrypt.compareSync(currPass, user.hashedPass)
+            if (pass1Good) {
+               const schema = new passwordValidator()
+               schema
+                  .is()
+                  .min(8)
+                  .is()
+                  .max(100)
+                  .has()
+                  .uppercase()
+                  .has()
+                  .lowercase()
+                  .has()
+                  .digits()
+                  .has()
+                  .not()
+                  .spaces()
+                  .is()
+                  .not()
+                  .oneOf(['Passw0rd', 'Password123'])
+               let validPassword = schema.validate(newPass)
+               let messages = schema.validate(newPass, { list: true })
+
+               if (validPassword) {
+                  const salt = bcrypt.genSaltSync(10)
+                  const hash = bcrypt.hashSync(newPass, salt)
+                  await User.update(
+                     { hashedPass: hash },
+                     { where: { id: user.id } }
+                  )
+                  res.status(200).send('Password updated')
+               } else return res.status(200).send(messages)
+            } else return res.status(200).send('Current password incorrect')
+         } else
+            return res
+               .status(200)
+               .send('Account not authorized. Try logging in again')
       } catch (err) {
          console.log(err)
          res.status(403).send(err)

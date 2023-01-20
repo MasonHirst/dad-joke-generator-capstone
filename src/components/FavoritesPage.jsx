@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { getUser } from '../data'
 import axios from 'axios'
 import FavoriteCard from './FavoriteCard'
+import { AuthContext } from '../context/Authentication'
 
 import BlackPage from '../style/BlackBackground'
 import Paper from '@mui/material/Paper'
@@ -9,7 +10,7 @@ import { Typography } from '@mui/material'
 import { ClipLoader } from 'react-spinners'
 
 const FavoritesPage = () => {
-   const [user, setUser] = useState(null)
+   const { user } = useContext(AuthContext)
    const [favs, setFavs] = useState(null)
 
    useEffect(() => {
@@ -49,13 +50,6 @@ const FavoritesPage = () => {
       }
    } else displayedFortunes = <ClipLoader size={40}/>
 
-   useEffect(() => {
-      async function getData() {
-         let userData = await getUser()
-         setUser(userData)
-      }
-      getData()
-   }, [])
 
    return (
       <BlackPage>

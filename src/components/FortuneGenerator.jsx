@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { getUser } from '../data'
 import { useDispatch, useSelector } from 'react-redux'
 import { setFortunes } from '../redux/slices/fortunesSlice'
 import { selectFortunes } from '../redux/slices/fortunesSlice'
 import { setLoadingFalse, setLoadingTrue } from '../redux/slices/isLoadingSlice'
-import cookieLeft from '../assets/FortuneCookieLeft.png'
-import cookieRight from '../assets/FortuneCookieRight.png'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import dadHead from '../assets/JokingDad.png'
+import { AuthContext } from '../context/Authentication'
 
 import { Typography } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox'
@@ -23,26 +21,16 @@ const FortuneGenerator = () => {
    let currentFortunes = useSelector(selectFortunes)
    let baseURL = 'http://localhost:3339'
 
-   const [user, setUser] = useState(null)
+   const { user } = useContext(AuthContext)
    const [focusedFortune, setFocusedFortune] = useState(null)
    const [includeUserFortunes, setIncludeUserFortunes] = useState(false)
-   const [showConfirmMessage, setShowConfirmMessage] = useState(false)
+   const [hideMessage, setHideMessage] = useState(false)
 
    const getRandomFortune = () => {
       setFocusedFortune(
          currentFortunes[Math.floor(Math.random() * currentFortunes.length)]
       )
    }
-
-   useEffect(() => {
-      async function getData() {
-         let userData = await getUser()
-         setUser(userData)
-         if (userData.confirmedAccount === true) setShowConfirmMessage(false)
-         else setShowConfirmMessage(true)
-      }
-      getData()
-   }, [])
 
    const toggleChecked = () => {
       setIncludeUserFortunes(!includeUserFortunes)
@@ -84,13 +72,64 @@ const FortuneGenerator = () => {
             position: 'relative,',
          }}
       >
-         {showConfirmMessage ? (
-            <div style={{display: 'flex', alignItems: 'center', position: 'absolute', top: '97px', backgroundColor: '#303030', padding: '0 10px', borderRadius: '3px'}}>
-               <Typography variant='h6' style={{fontSize: '15px', color: 'white', fontWeight: 'bold',}}>Your email still needs to be verified</Typography>
-               <Button variant='text' onClick={() => navigate('/user/confirm_email', {state: {id: user.id, email: user.email, username: user.username}})} style={{textTransform: 'none', fontWeight: 'bold', fontSize: '15px', color: '', }}>Finish account</Button>
-               <div style={{color: 'white', fontSize: '20px', paddingBottom: '3px'}}>x</div>
+         {user.confirmedAccount === false ? (
+            hideMessage ? '' : (
+            <div
+               style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  top: '97px',
+                  gap: '10px',
+                  backgroundColor: '#303030',
+                  padding: '2px 10px',
+                  borderRadius: '3px',
+               }}
+            >
+               <Typography
+                  variant="h6"
+                  style={{
+                     fontSize: '15px',
+                     color: 'white',
+                     fontWeight: 'bold',
+                  }}
+               >
+                  Your email still needs to be verified
+               </Typography>
+               <Button
+                  variant="text"
+                  onClick={() =>
+                     navigate('/user/confirm_email', {
+                        state: {
+                           id: user.id,
+                           email: user.email,
+                           username: user.username,
+                        },
+                     })
+                  }
+                  style={{
+                     textTransform: 'none',
+                     fontWeight: 'bold',
+                     fontSize: '15px',
+                     color: '',
+                  }}
+               >
+                  Finish account
+               </Button>
+               <Button
+                  onClick={() => setHideMessage(true)}
+                  variant="text"
+                  style={{
+                     textTransform: 'none',
+                     fontWeight: 'bold',
+                     fontSize: '15px',
+                     color: '',
+                  }}
+               >
+                  dismiss
+               </Button>
             </div>
-         ) : (
+         )) : (
             ''
          )}
          <Paper
@@ -126,7 +165,7 @@ const FortuneGenerator = () => {
                      marginBottom: '15px',
                   }}
                >
-                  Are you ready to see your fortune?
+                  Are you ready to groan?
                </Typography>
                <Button
                   variant="contained"
@@ -138,13 +177,13 @@ const FortuneGenerator = () => {
                      fontSize: '25px',
                   }}
                >
-                  Get random fortune
+                  Get random dad-joke
                </Button>
 
                <FormGroup>
                   <FormControlLabel
                      control={<Checkbox onChange={toggleChecked} />}
-                     label="Include user-added fortunes"
+                     label="Include user-added jokes"
                   />
                </FormGroup>
             </div>
@@ -152,48 +191,24 @@ const FortuneGenerator = () => {
             <div
                style={{
                   display: 'flex',
+                  gap: '20px',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
-                  width: 'calc(100% + 250px)',
-                  marginLeft: '15px',
-                  height: '200px',
+                  justifyContent: 'left',
+                  width: '90%',
+                  maxWidth: '90%',
                }}
             >
-               <img
-                  src={cookieLeft}
-                  width="300px"
+               <img src={dadHead} width="350px" />
+               <h3
                   style={{
+                     textAlign: 'center',
+                     fontSize: '18px',
                      position: 'relative',
-                     left: '65px',
-                     top: '16px',
-                  }}
-               />
-               <div
-                  style={{
-                     borderRadius: '2px',
-                     display: 'flex',
-                     padding: '0 10px',
-                     alignItems: 'center',
-                     justifyContent: 'center',
-                     backgroundColor: '#d3d3d3',
-                     height: '65px',
-                     width: '100%',
-                     zIndex: '1',
+                     left: '-95px',
                   }}
                >
-                  <h3 style={{ textAlign: 'center', fontSize: '18px' }}>
-                     {focusedFortune ? focusedFortune.text : ''}
-                  </h3>
-               </div>
-               <img
-                  src={cookieRight}
-                  width="300px"
-                  style={{
-                     position: 'relative',
-                     right: '72px',
-                     top: '6px',
-                  }}
-               />
+                  {focusedFortune ? focusedFortune.text : ''}
+               </h3>
             </div>
          </Paper>
       </div>
