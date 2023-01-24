@@ -68,7 +68,7 @@ const AddFortune = () => {
                padding: 40,
             }}
          >
-            <Typography variant='h4' style={{margin: '15px 0',}}>Submit your own Fortune</Typography>
+            <Typography variant='h4' style={{margin: '15px 0',}}>Submit your own joke</Typography>
             <form
                onSubmit={submitHandler}
                style={{
