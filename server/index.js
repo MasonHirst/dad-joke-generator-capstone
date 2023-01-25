@@ -59,6 +59,6 @@ db.
    sync({force: true})
    .then(() => seed())
    .then(() => {
-      server.listen(SERVER_PORT, () => console.log(`SERVER RUNNING ON SERVER_PORT ${SERVER_PORT}`))
+      server.listen(SERVER_PORT || 3200, () => console.log(`SERVER RUNNING ON SERVER_PORT ${SERVER_PORT || 3200}`))
    })
    .catch(err => console.log(err))
