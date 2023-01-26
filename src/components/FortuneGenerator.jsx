@@ -19,7 +19,7 @@ const FortuneGenerator = () => {
    const navigate = useNavigate()
    const dispatch = useDispatch()
    let currentFortunes = useSelector(selectFortunes)
-   let baseURL = 'http://localhost:3339'
+   let baseURL = ''
 
    const { user } = useContext(AuthContext)
    const [focusedFortune, setFocusedFortune] = useState(null)
