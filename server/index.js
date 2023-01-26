@@ -55,9 +55,9 @@ server.delete('/user/favorites/delete/:id', deleteFav)
 const { SERVER_PORT } = process.env
 
 db.
-   // sync()
-   sync({force: true})
-   .then(() => seed())
+   sync()
+   // sync({force: true})
+   // .then(() => seed())
    .then(() => {
       server.listen(SERVER_PORT || 3200, () => console.log(`SERVER RUNNING ON SERVER_PORT ${SERVER_PORT || 3200}`))
    })
