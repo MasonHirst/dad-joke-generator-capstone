@@ -13,7 +13,7 @@ module.exports = {
          const salt = bcrypt.genSaltSync(10)
          const hash = bcrypt.hashSync(oneTimePass.toString(), salt)
 
-         await User.update({ oneTimePass: sequelize.escape(hash) }, { where: { id: sequelize.escape(id) } })
+         await User.update({ oneTimePass: hash }, { where: { id } })
 
          SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey =
             SEND_IN_BLUE_FIRST_API_KEY
@@ -51,7 +51,7 @@ module.exports = {
    compareOneTimePass: async (req, res) => {
       const { id, pass } = req.body
       try {
-         let user = await User.findOne({ where: { id: sequelize.escape(id) } })
+         let user = await User.findOne({ where: { id } })
          authenticated = bcrypt.compareSync(pass, user.oneTimePass)
          console.log('one time password authenticated: ', authenticated)
          if (authenticated) {
@@ -59,7 +59,7 @@ module.exports = {
                { oneTimePass: null },
                { where: { id } }
             )
-            await User.update({ confirmedAccount: true }, { where: { id: sequelize.escape(id) } })
+            await User.update({ confirmedAccount: true }, { where: { id } })
             return res.status(200).send(removed)
          } else return res.status(200).send('code incorrect')
       } catch (err) {
@@ -71,7 +71,7 @@ module.exports = {
    sendTempPassword: async (req, res) => {
       const { email } = req.params
       try {
-         let foundUser = await User.findOne({where: { email: sequelize.escape(email) }})
+         let foundUser = await User.findOne({where: { email }})
          if (!foundUser) return res.status(200).send('no account with that email')
          
          let tempPass = Math.floor(Math.random() * 1000000)
@@ -79,8 +79,8 @@ module.exports = {
          const hash = bcrypt.hashSync(tempPass.toString(), salt)
 
          let updated = await User.update(
-            { hashedPass: sequelize.escape(hash) },
-            { where: { email: sequelize.escape(email) } }
+            { hashedPass: hash },
+            { where: { email: email } }
          )
          console.log(updated)
 

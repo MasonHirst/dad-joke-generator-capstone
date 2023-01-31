@@ -8,7 +8,7 @@ require('dotenv').config()
 module.exports = {
    checkUsernameAvailability: async (req, res) => {
       let usernameTaken = await User.findAll({
-         where: { username: sequelize.escape(req.params.username) },
+         where: { username: req.params.username },
       })
 
       if (usernameTaken.length !== 0) {
@@ -20,9 +20,11 @@ module.exports = {
 
    checkEmailAvailability: async (req, res) => {
       try {
+         console.log(0)
          if (isEmail(req.params.email)) {
+            console.log(1)
             let emailTaken = await User.findAll({
-               where: { email: sequelize.escape(req.params.email) },
+               where: { email: req.params.email },
             })
             if (emailTaken.length !== 0)
                res.status(200).send('email already in use')
@@ -30,6 +32,7 @@ module.exports = {
          } else {
             res.status(200).send('not a valid email format')
          }
+         console.log(2)
       } catch (err) {
          res.status(403).send(err)
       }
@@ -69,12 +72,12 @@ module.exports = {
          const salt = bcrypt.genSaltSync(10)
          const hash = bcrypt.hashSync(password, salt)
 
-         let findUser = await User.findOne({ where: { email: sequelize.escape(email) } })
+         let findUser = await User.findOne({ where: { email: email } })
          console.log('............----------------............', findUser)
          if (findUser) return res.status(200).send('email already in use')
 
          let createUser = await User.create({
-            email: sequelize.escape(email),
+            email: email,
             username: '',
             hashedPass: hash,
             confirmedAccount: false,
@@ -133,7 +136,7 @@ module.exports = {
          if (!sub) throw new Error('unauthorized')
          // --------------
          const user = await User.findOne({
-            where: { id: sequelize.escape(sub) },
+            where: { id: sub },
          })
          delete user.dataValues.hashedPass
          return res.send(user)
@@ -146,9 +149,9 @@ module.exports = {
       const { id, username } = req.body
       try {
          if (username.length > 1) {
-            await User.update({ username: sequelize.escape(username) }, { where: { id: sequelize.escape(id) } })
+            await User.update({ username: username }, { where: { id } })
 
-            const user = await User.findOne({ where: { id: sequelize.escape(id) } })
+            const user = await User.findOne({ where: { id } })
 
             const accessToken = await signAccessToken({ sub: id })
             res.status(200).send({ accessToken, user })
@@ -166,7 +169,7 @@ module.exports = {
       try {
          const { sub } = await verifyAccessToken(accessToken)
          if (sub) {
-            let user = await User.findOne({ where: { id: sequelize.escape(sub) } })
+            let user = await User.findOne({ where: { id: sub } })
             let pass1Good = bcrypt.compareSync(currPass, user.hashedPass)
             if (pass1Good) {
                const schema = new passwordValidator()
@@ -194,8 +197,8 @@ module.exports = {
                   const salt = bcrypt.genSaltSync(10)
                   const hash = bcrypt.hashSync(newPass, salt)
                   await User.update(
-                     { hashedPass: sequelize.escape(hash) },
-                     { where: { id: sequelize.escape(user.id) } }
+                     { hashedPass: hash },
+                     { where: { id: user.id } }
                   )
                   res.status(200).send('Password updated')
                } else return res.status(200).send(messages)
